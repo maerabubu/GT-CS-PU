@@ -5,6 +5,10 @@ Go to the CtSent website and follow the instructions. https://zenodo.org/record/
 
 Some updates and sample data will be uploaded in the future.
 
+If you have any issues or concerns on code, please feel free to contact Zhangfeng by sending us Emails: jspcmazhangfeng@hhu.edu.cn
+
+If you find it helps, please cite the below two references.
+
 References:
 
 
