@@ -1,35 +1,43 @@
-function Ph1 = CtSent_PUErrorCorrection(n_image,nconsec,lonlat,Ph,flag)
+function Ph1 = CtSent_PUErrorCorrection(edgs,lonlat,Ph,flag)
 % Phase Unwrapping Error Correction Based on Compressed Sensing
-% Use Small-Baseline (Sequential Network) InSAR Data
-% Created by Zhang-Feng Ma on 30/09/2020
+% Use Sequential Network and Single Look InSAR Data
+% Created by Zhang-Feng Ma on 27/11/2020
 % School of Earth Sciences and Engineering,Hohai University
 % Email: jspcmazhangfeng@hhu.edu.cn
-
-%CtSent_PUErrorCorrection Summary of this function goes here
-%Phase Unwrapping Error Correction Based on Integer Linear Programming
-%n_image: number of SLC
-%nconsec:sequence of the sequential network
-%lonlat: longitude and latitude matrix, Mx2
-%ph: unwrapped phase matrix, MxN
-%flag:1 (ILP), 2 (LS) , 1.5 (LASSO)
-
+% % Input Variables
+% %
+% % n_image;        % number of SLC
+% %                  
+% %
+% % edgs: Two-Columns Interferogram List, eg.[1 2; 1 3; 1 4; 2 3; 2 4];
+% % lonlat:         % latitude and longitude   
+% % Ph:             % phase
+% % flag:           % 1:ILP 1.5:LASSO 2:L2-Norm
+% % Output Variables
+% %
+% % PhU;              % (rad) Corrected Phase 
+% %                  
 fprintf('#######################CtSent v1.1####################### \n');
 fprintf('######################################################### \n');
-fprintf('#################  PU Error Correction  ################# \n');
+fprintf('############## Unwrapping Error Correction ############## \n');
 fprintf('######################################################### \n');
 fprintf('########     Zhang-Feng Ma, Hohai University      ####### \n');
-fprintf('###################  30,July,2020    #################### \n');
-
-%replace NaN to zero
+fprintf('###################   27,Nov,2019    #################### \n');
+dateid = unique(edgs(:));
+[~,edgs] = ismember(edgs,dateid);
+n_image = length(dateid);
 Ph(isnan(Ph)) = 0;
 [npoints,nedges] = size(Ph);
+fprintf('Searching All Triangle Loops in SBAS Graph... \n');
+[incMat,eleidx] = findtri(edgs);
 fprintf('Calculating Residues & PU Errors... \n');
-[~,~,edgs,eleidx] = TriangleNetwork(n_image,nconsec);
-incMat = designIncMat(eleidx,nedges);
+%[~,~,edgs,eleidx] = TriangleNetwork(n_image,nconsec);
+%incMat = designIncMat(eleidx,nedges);
 Ph1 = Ph;
-% ambiguityNow = abs(Ph *(incMat'));
-% Ph = setref(incMat,Ph,lonlat,ambiguityNow);
+fprintf('Automatically Setting Phase Reference using DBSCAN... \n');
+%ambiguityNow = abs(Ph *(incMat'));
 Ph = setref_auto(Ph,lonlat);
+%Ph = setref(incMat,Ph,lonlat,ambiguityNow);
 [~,~,residual2pi,~,resiual2piele] = ClosingLoops(eleidx,edgs,Ph,n_image);
 fprintf('%d Triangle Loops in Total... \n',size(eleidx,1));
 for i = 1:size(eleidx,1)
@@ -61,7 +69,7 @@ for i = 1:npointPUc
 %    ppm.increment();
 % parfor_progress;
 end
-% parfor_progress(0);
+parfor_progress(0);
 Ph1(idx,:) = Ph1(idx,:) + correctPh;
 end
 function Modula2PI = LPsolver(Ph,incMat)
@@ -70,11 +78,14 @@ Aeq = [incMat,-incMat];
 Beq = round(incMat*Ph./(-2*pi));
 L = zeros(n_edge*2,1);%lower boundary
 U = Inf(n_edge*2,1);%upper boundary
-% fprintf('Starting to slove L1-Norm by integer linear programming(ILP)...\n');
+% fprintf('Starting to slove L1-Norm by linear programming(LP)...\n');
 options = optimoptions('intlinprog','Display','off');
-% sol = linprog(double(ones(n_edge*2,1)),[],[],Aeq,double(Beq),L,U,options);
-[sol,~] = intlinprog(double(ones(n_edge*2,1)),(1:size(L))',[],[],Aeq,double(Beq),L,U,options);
-% fprintf('Ambiguities fixed! \n');
+%sol = linprog(double(ones(n_edge*2,1)),[],[],Aeq,double(Beq),L,U,options);
+[sol,~] = intlinprog(double(ones(n_edge*2,1)),(1:n_edge*2)',[],[],Aeq,double(Beq),L,U,options);
+if isempty(sol)
+    warning('Warning: No Fixed Solution!!!...\n');
+end
+%fprintf('Ambiguities fixed! \n');
 Hp = sol(1:n_edge,1);Hm = sol(n_edge+1:end,1);%plus charge and minus charge
 Modula2PI = round(Hp-Hm)';
 end
@@ -152,7 +163,7 @@ figure;scatter(lonlat(:,1),lonlat(:,2),5,sum(ambiguityNow,2),'filled');box on;
 grid on;set(gca,'tickdir','out');
 set(gca,'gridlinestyle','--','GridColor',[1 1 1],'linewidth',1);
 set(gca,'color',[0.6235    0.7137    0.8039]);axis tight;
-cptcmap('GMT_haxby.cpt');colorbar('Location','southoutside');cbarrow;
+%cptcmap('GMT_haxby.cpt');colorbar('Location','southoutside');cbarrow;
 %colorbar('Location','southoutside');
 title('Setting reference...');
 polycircle = drawcircle;
@@ -161,12 +172,36 @@ close;
 ind = inpolygon(lonlat(:,1),lonlat(:,2),poly(:,1),poly(:,2));
 % intcycles = round((PhU - angle(exp(1j.*PhU)))./(2*pi));
 intcycles = (PhU-repmat(nanmean(PhU(ind,:),1),size(lonlat,1),1))*(A');
-figure;subplot(2,1,1);imagesc(intcycles(ind,:));cptcmap('GMT_haxby.cpt');
+figure;subplot(2,1,1);imagesc(intcycles(ind,:));%cptcmap('GMT_haxby.cpt');
 subplot(2,1,2);plot(std(intcycles(ind,:)),'ko');
 prompt = 'Are there ambiguities dominating the selected region ? [Yes:1 or No:0] ';
 inp = input(prompt);
 end
 PhU = (PhU-repmat(nanmean(PhU(ind,:),1),size(lonlat,1),1));
+end
+function [A,eleidx] = findtri(Intflist)
+%findtri: find all triangle loops in SBAS graph
+%Intflist: two-columns ifg id matrix [reference secondary]
+
+Intf = unique(Intflist(:));
+Intf = sort(Intf,'ascend');
+alltri = nchoosek(Intf,3);
+ntri = size(alltri);
+A = [];
+m = 1;
+for i = 1:ntri
+    triedgs = [alltri(i,1),alltri(i,2);alltri(i,2),alltri(i,3);alltri(i,1),alltri(i,3)];
+    [temp,ix] = ismember(triedgs,Intflist,'rows');
+    if sum(temp)==3
+        tempA = zeros(1,length(Intflist));
+        tempA(ix(1)) = 1;tempA(ix(2)) = 1;tempA(ix(3)) = -1;
+        A = [A;tempA];
+        eleidx(m,:) = ix;
+        m = m + 1;
+    end  
+
+end
+
 end
 function PhU = setref_auto(PhU,lonlat)
 ref_lonlat = DBScanForReliable(lonlat(1:20:end,:),PhU(1:20:end,:));
@@ -179,32 +214,6 @@ y = r*sin(t);
 xy=llh2local(lonlat',[ref_lonlat(1),ref_lonlat(2)])'*1000;
 ind = inpolygon(xy(:,1),xy(:,2),x,y);
 PhU = (PhU-repmat(nanmean(PhU(ind,:),1),size(lonlat,1),1));
-end
-function  [order,incMat,edgs,eleidx] = TriangleNetwork(stacksize,N)
-%N: degree
-%stack size
-m=1;k=1;
-for i=1:stacksize-1
-    for j=i+1:i+N
-        if j>=stacksize
-            continue;
-        end
-   order(m,1)=i;order(m,2)=i+1; order(m,3)=j+1;
-   incMat(m,i) = 1;incMat(m,i+1) = 1;incMat(m,j+1) = -1;
-   edgs(k,1) = i;edgs(k,2) = i+1;edgs(k+1,1) = i+1;edgs(k+1,2) = j+1;edgs(k+2,1) = i;edgs(k+2,2) = j+1;
-   k = k+3;
-   m=m+1;
-    end
-end
-edgs = unique(edgs,'rows');
-for i = 1:size(order,1)
-       temp = ismember(edgs,[order(i,1) order(i,2)],'rows');
-    eleidx(i,1) = (find(temp == 1));
-        temp = ismember(edgs,[order(i,2) order(i,3)],'rows');
-    eleidx(i,2) = (find(temp == 1));
-        temp = ismember(edgs,[order(i,1) order(i,3)],'rows');
-    eleidx(i,3) = (find(temp == 1));
-end
 end
 function ref_lonlat = DBScanForReliable(lonlat,ph)
 tempcoh = edgesetTempcoh(ph,lonlat(:,1),lonlat(:,2));
@@ -372,14 +381,28 @@ function xy=llh2local(llh,origin)
    
    xy=xy/1000;
 end
-function [ph_uw,ph_res] = uw_invert_sm(ifgday_ix,phU,n_image)
-n_ifg = size(phU,2);
-G=zeros(n_ifg,n_image);
-for i=1:n_ifg
-    G(i,ifgday_ix(i,1))=-1;
-    G(i,ifgday_ix(i,2))=1;
+function [Xwh, mu, invMat, whMat] = whiten(X,epsilon)
+
+% INPUT
+% X: rows are the instances, columns are the features
+% epsilon: small number to compensate for nearly 0 eigenvalue [DEFAULT =
+% 0.0001]
+%
+% OUTPUT
+% Xwh: whitened data, rows are instances, columns are features
+% mu: mean of each feature of the orginal data
+% invMat: the inverse data whitening matrix
+% whMat: the whitening matrix
+
+if ~exist('epsilon','var')
+    epsilon = 0.0001;
 end
-G(:,1)=[]; % take out master as ref by setting to zero
-ph_uw = lscov(G,double(phU'))';
-ph_res=single(phU - (G*ph_uw')');
+
+mu = mean(X); 
+X = bsxfun(@minus, X, mu);
+A = X'*X;
+[V,D,notused] = svd(A);
+whMat = sqrt(size(X,1)-1)*V*sqrtm(inv(D + eye(size(D))*epsilon))*V';
+Xwh = X*whMat;  
+invMat = pinv(whMat);
 end
