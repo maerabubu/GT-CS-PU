@@ -7,7 +7,8 @@ Some updates and sample data will be uploaded in the future.
 
 If you have any issues or concerns on code, please feel free to contact Zhangfeng by sending us Emails: jspcmazhangfeng@hhu.edu.cn
 
-If you find it helps, please cite the below two references.
+If you find it helps, please cite the below three references.
+
 
 References:
 
@@ -16,3 +17,5 @@ References:
 
 
 [2] Ma, Z.F. et.al (2021), Go Extra Miles: An Additional Error Correction Procedure Aimed to Further Improve Phase Unwrapping Accuracy and Reduce Creep Model Uncertainty. Journal of Geophysical Research-Solid Earth
+
+[3] Ma, Z.F. et.al (2023), Unwrapping Error and Fading Signal Correction on Multi-looked InSAR Data. Preprint.
