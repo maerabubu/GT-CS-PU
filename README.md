@@ -9,6 +9,9 @@ If you have any issues or concerns on code, please feel free to contact Zhangfen
 
 If you find it helps, please cite the below two references.
 
+The newly uploaded demo showcases how to use the apsp-based time series unwrapping.
+Please download test data first before using it (https://drive.google.com/file/d/1zhnhrYlmlFLOX1bhoJq67uVNiqE5yxh-/view?usp=sharing).
+
 References:
 
 
