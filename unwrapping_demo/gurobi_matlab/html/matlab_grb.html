@@ -1,0 +1,445 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>gurobi()</TITLE>
+<META NAME="description" CONTENT="gurobi()">
+<META NAME="keywords" CONTENT="matlab_html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021.2">
+
+<LINK REL="STYLESHEET" HREF="matlab_html.css">
+
+<LINK REL="next" HREF="matlab_grb_iis.html">
+<LINK REL="previous" HREF="matlab_solving_a_model.html">
+<LINK REL="next" HREF="matlab_grb_iis.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A
+ HREF="matlab_grb_iis.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_solving_a_model.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_solving_a_model.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_grb_iis.html">gurobi_iis()</A>
+<B> Up:</B> <A
+ HREF="matlab_solving_a_model.html">Solving a Model</A>
+<B> Previous:</B> <A
+ HREF="matlab_solving_a_model.html">Solving a Model</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H3><A ID="SECTION00022100000000000000">
+gurobi()</A>
+</H3>
+<A ID="matlab:gurobi"></A>
+
+<TABLE class="PAD " style="">
+<TR><TD CLASS="LEFT"><FONT COLOR="#801a1a"> <SPAN CLASS="LARGE"><SPAN  CLASS="textbf">gurobi</SPAN></SPAN> </FONT></TD>
+<TD CLASS="LEFT">( model )</TD>
+</TR>
+<TR><TD CLASS="LEFT"><FONT COLOR="#801a1a"> <SPAN CLASS="LARGE"><SPAN  CLASS="textbf">gurobi</SPAN></SPAN> </FONT></TD>
+<TD CLASS="LEFT">( model, params )</TD>
+</TR>
+</TABLE>
+
+
+<P>
+This function optimizes the given model.  The algorithm used for the
+optimization depends on the model type (simplex or barrier for a
+continuous model; branch-and-cut for a MIP model).  Upon successful
+completion it will return a <TT>struct</TT> variable
+containing solution information.
+
+<P>
+Please consult <A ID="tex2html34"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/variables_and_constraints.html">Variables and
+  Constraints</A>
+section in the reference manual for a discussion of some of the practical
+issues associated with solving a precisely defined mathematical model using
+finite-precision floating-point arithmetic.
+
+<P>
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Arguments:</SPAN></SPAN>
+
+<P>
+ <SPAN  CLASS="textbf">model</SPAN>: The model <TT>struct</TT> must contain a valid Gurobi model.
+See the 
+<A HREF="matlab_the_model_argument.html#matlab:model"><TT>model</TT></A> argument section
+for more information.
+
+<P>
+ <SPAN  CLASS="textbf">params</SPAN>: The params <TT>struct</TT>, when provided, contains a list of modified Gurobi parameters. See the
+
+<A HREF="matlab_the_params_argument.html#matlab:params"><TT>params</TT></A> argument section
+for more information.
+
+<P>
+
+<P>
+
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Example usage:</SPAN></SPAN>
+<BR><TT>
+<SCRIPT SRC="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></SCRIPT></TT>
+<BR>
+<PRE CLASS="prettyprint">    result = gurobi(model, params);
+    if strcmp(result.status, 'OPTIMAL');
+      fprintf('Optimal objective: %e\n', result.objval);
+      disp(result.x)
+    else
+      fprintf('Optimization returned status: %s\n', result.status);
+    end
+</PRE>
+
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Return value:</SPAN></SPAN>
+
+<P>
+
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">The optimization result</SPAN></SPAN>
+
+<P>
+The 
+<A HREF="#matlab:gurobi"><TT>gurobi</TT></A> function returns a <TT>struct</TT>,
+with the various results of the optimization stored in its fields.
+The specific results that are available depend on the type of model
+that was solved, the parameters used, and the status of the
+optimization. The following is a list of fields that might
+be available in the returned result.  We will discuss the
+circumstances under which each will be available after presenting the
+list.
+
+<P>
+
+<SPAN  CLASS="textbf">Model fields</SPAN>
+
+<P>
+<DL>
+<DT><STRONG>status</STRONG></DT>
+<DD>The status of the optimization, returned as a string.
+The desired result is <TT>OPTIMAL</TT>, which indicates that an
+optimal solution to the model was found. Other status are possible,
+for example if the model has no feasible solution or if you set a
+Gurobi parameter that leads to early solver termination. See the
+<A ID="tex2html35"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/optimization_status_codes.html">Status Code</A>
+section for further
+information on the Gurobi status codes.
+
+<P>
+</DD>
+<DT><STRONG>objval</STRONG></DT>
+<DD>The objective value of the computed solution.  Note that
+for multi-objective models <TT>result.objval</TT> will
+be a vector, where <TT>result.objval(i)</TT>
+stores the value for <TT>model.multiobj(i)</TT>.
+
+<P>
+</DD>
+<DT><STRONG>objbound</STRONG></DT>
+<DD>Best available bound on solution (lower bound for
+minimization, upper bound for maximization).
+
+<P>
+</DD>
+<DT><STRONG>objboundc</STRONG></DT>
+<DD>The best unrounded bound on the optimal objective.
+In contrast to <TT>objbound</TT>, this attribute
+does not take advantage of objective integrality information to round
+to a tighter bound.  For example, if the objective is known to take an
+integral value and the current best bound is 1.5, <TT>objbound</TT> will
+return 2.0 while <TT>objboundc</TT> will return 1.5.
+
+<P>
+</DD>
+<DT><STRONG>mipgap</STRONG></DT>
+<DD>Current relative MIP optimality gap; computed as
+<!-- MATH
+ $\vert ObjBound-ObjVal\vert/\vert ObjVal\vert$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img45.svg"
+ ALT="$\vert ObjBound-ObjVal\vert/\vert ObjVal\vert$"></SPAN> (where
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.52ex; vertical-align: -0.57ex; " SRC="img46.svg"
+ ALT="$ObjBound$"></SPAN> and <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.52ex; vertical-align: -0.57ex; " SRC="img47.svg"
+ ALT="$ObjVal$"></SPAN> are the MIP
+objective bound and incumbent solution objective, respectively).
+Returns <TT>GRB_INFINITY</TT> when an incumbent solution has not yet
+been found, when no objective bound is available, or when the current
+incumbent objective is 0.  This is only available for mixed-integer
+problems.
+
+<P>
+</DD>
+<DT><STRONG>runtime</STRONG></DT>
+<DD>The elapsed wall-clock time (in seconds) for the
+optimization.
+
+<P>
+</DD>
+<DT><STRONG>work</STRONG></DT>
+<DD>The work (in work units) spent on the optimization.  As opposed to
+the runtime in seconds, the work is deterministic. This means that on
+the same hardware and with the same parameter and attribute settings,
+solving the same model twice will lead to exactly the same amount of
+work in each of the two solves.  One work unit corresponds very
+roughly to one second, but this greatly depends on the hardware on
+which Gurobi is running and on the model that has been solved.
+
+<P>
+</DD>
+<DT><STRONG>itercount</STRONG></DT>
+<DD>Number of simplex iterations performed.
+
+<P>
+</DD>
+<DT><STRONG>baritercount</STRONG></DT>
+<DD>Number of barrier iterations performed.
+
+<P>
+</DD>
+<DT><STRONG>nodecount</STRONG></DT>
+<DD>Number of branch-and-cut nodes explored.
+
+<P>
+</DD>
+<DT><STRONG>maxvio</STRONG></DT>
+<DD>Value of the maximal (unscaled) violation of the returned solution.
+
+<P>
+</DD>
+<DT><STRONG>farkasproof</STRONG></DT>
+<DD>Magnitude of infeasibility violation in Farkas
+  infeasibility proof. Only available if the model was found to be
+  infeasible.  Please refer to
+  <A ID="tex2html36"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/farkasproof.html">Attribute</A>
+section in the reference manual for details.
+</DD>
+</DL>
+
+<P>
+
+<SPAN  CLASS="textbf">Variable fields</SPAN>
+
+<P>
+<DL>
+<DT><STRONG>x</STRONG></DT>
+<DD>The computed solution. This vector contains one entry for each
+column of <TT>A</TT>.
+
+<P>
+</DD>
+<DT><STRONG>rc</STRONG></DT>
+<DD>Variable reduced costs for the computed solution. This
+vector contains one entry for each column of <TT>A</TT>.
+
+<P>
+</DD>
+<DT><STRONG>vbasis</STRONG></DT>
+<DD>Variable basis status values for the computed optimal
+basis. You generally should not concern yourself with the contents of
+this vector. If you wish to use an advanced start later, you would
+simply copy the <TT>vbasis</TT> and <TT>cbasis</TT> fields into
+the corresponding fields for the next model. This vector contains one
+entry for each column of <TT>A</TT>.
+
+<P>
+</DD>
+<DT><STRONG>unbdray</STRONG></DT>
+<DD>Unbounded ray. Provides a vector that, when added to
+  any feasible solution, yields a new solution that is also feasible
+  but improves the objective. Only available if the model is found
+  to be unbounded.  This vector contains one entry for
+  each column of <TT>A</TT>.
+</DD>
+</DL>
+
+<P>
+
+<SPAN  CLASS="textbf">Linear constraint fields</SPAN>
+
+<P>
+<DL>
+<DT><STRONG>slack</STRONG></DT>
+<DD>The constraint slack for the computed solution. This
+vector contains one entry for each row of <TT>A</TT>.
+
+<P>
+</DD>
+<DT><STRONG>pi</STRONG></DT>
+<DD>Dual values for the computed solution (also known as <EM>shadow prices</EM>). This vector contains one entry for each row of
+<TT>A</TT>.
+
+<P>
+</DD>
+<DT><STRONG>cbasis</STRONG></DT>
+<DD>Constraint basis status values for the computed optimal
+basis. This vector contains one entry for each row of <TT>A</TT>.
+
+<P>
+</DD>
+<DT><STRONG>farkasdual</STRONG></DT>
+<DD>Farkas infeasibility proof. Only available if
+  the model was found to be infeasible.  Please refer to
+<A ID="tex2html37"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/farkasdual.html">Attribute</A>
+section in the reference manual for details.
+</DD>
+</DL>
+
+<P>
+
+<SPAN  CLASS="textbf">Quadratic constraint fields</SPAN>
+
+<P>
+<DL>
+<DT><STRONG>qcslack</STRONG></DT>
+<DD>The quadratic constraint slack in the current solution.  This
+vector contains one entry for each quadratic constraint.
+
+<P>
+</DD>
+<DT><STRONG>qcpi</STRONG></DT>
+<DD>The dual values associated with the quadratic constraints.  This
+vector contains one entry for each quadratic constraint.
+</DD>
+</DL>
+
+<P>
+
+<SPAN  CLASS="textbf">Solution Pool fields</SPAN>
+
+<P>
+<DL>
+<DT><STRONG>pool</STRONG></DT>
+<DD>When multiple solutions are found during the
+optimization call, these solutions are returned in this field.
+A struct array.  When present, each struct has the
+following fields:
+<DL>
+<DT><STRONG>objval</STRONG></DT>
+<DD>Stores the objective value of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th solution in
+<TT>result.pool(i).objval</TT>.
+Note that when the model is a multi-objective model, instead of a
+single value,
+<BR><TT>result.pool(i).objval(j)</TT> stores the value
+of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.44ex; vertical-align: -0.57ex; " SRC="img48.svg"
+ ALT="$j$"></SPAN>-th objective function for the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th solution.
+
+<P>
+</DD>
+<DT><STRONG>xn</STRONG></DT>
+<DD>Stores the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th solution in <TT>result.pool(i).xn</TT>. This vector 
+contains one entry for each column of <TT>A</TT>.
+</DD>
+</DL>
+Note that to query the number of solutions stored, you can query the
+length of <TT>result.pool</TT>.
+
+<P>
+</DD>
+<DT><STRONG>poolobjbound</STRONG></DT>
+<DD>For single-objective MIP optimization problems,
+  this value gives a bound on the best possible objective of an
+  undiscovered solution.  The difference between this value and
+  <TT>objbound</TT> is that the former gives an objective bound for
+  undiscovered solutions, while the latter gives a bound for any
+  solution.
+
+<P>
+</DD>
+</DL>
+
+<P>
+
+<SPAN  CLASS="textbf">What is Available When</SPAN>
+
+<P>
+The <TT>status</TT> field will be present in all cases. It
+indicates whether Gurobi was able to find a proven optimal solution to
+the model. In cases where a solution to the model was found, optimal
+or otherwise, the <TT>objval</TT> and <TT>x</TT> fields will be
+present.
+
+<P>
+For linear and quadratic programs, if a solution is available, then
+the <TT>pi</TT> and <TT>rc</TT> fields will also be present.
+For models with quadratic constraints, if the parameter
+<TT>qcpdual</TT> is set to 1, the field <TT>qcpi</TT> will be
+present. If the final solution is a <EM>basic</EM> solution (computed
+by simplex), then <TT>vbasis</TT> and <TT>cbasis</TT> will be
+present. If the model is an unbounded linear program and the
+<A ID="tex2html38"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/infunbdinfo.html">InfUnbdInfo</A>
+parameter is set to
+1, the field <TT>unbdray</TT> will be present. Finally, if the
+model is an infeasible linear program and the
+<A ID="tex2html39"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/infunbdinfo.html">InfUnbdInfo</A>
+parameter is set to
+1, the fields <TT>farkasdual</TT> and <TT>farkasproof</TT> will
+be set.
+
+<P>
+For mixed integer problems, no dual information (i.e. <TT>pi</TT>,
+<TT>slack</TT>, <TT>rc</TT>, <TT>vbasis</TT>, <TT>cbasis</TT>, <TT>qcslack</TT>, <TT>qcpi</TT>, <TT>ubdray</TT> or
+<TT>farkasdual</TT>) is ever available.
+When multiple solutions are found, the <TT>pool</TT> and <TT>poolobjbound</TT> fields will be present.
+Depending on the <TT>status</TT> field value, the fields 
+<TT>nodecount</TT>, <TT>objbound</TT>, <TT>objbundc</TT> and
+<TT>mipgap</TT> will be available.
+
+<P>
+For continuous and mixed-integer models, under normal execution,
+the fields <TT>runtime</TT>, <TT>work</TT>, <TT>itercount</TT> and
+<TT>baritercount</TT> will be available.
+
+<P>
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="matlab_grb_iis.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_solving_a_model.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_solving_a_model.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_grb_iis.html">gurobi_iis()</A>
+<B> Up:</B> <A
+ HREF="matlab_solving_a_model.html">Solving a Model</A>
+<B> Previous:</B> <A
+ HREF="matlab_solving_a_model.html">Solving a Model</A></DIV>
+<!--End of Navigation Panel-->
+
+</BODY>
+</HTML>

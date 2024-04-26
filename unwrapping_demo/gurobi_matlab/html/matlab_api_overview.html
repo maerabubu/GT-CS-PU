@@ -1,0 +1,383 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>MATLAB API Overview</TITLE>
+<META NAME="description" CONTENT="MATLAB API Overview">
+<META NAME="keywords" CONTENT="matlab_html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021.2">
+
+<LINK REL="STYLESHEET" HREF="matlab_html.css">
+
+<LINK REL="next" HREF="matlab_api_details.html">
+<LINK REL="previous" HREF="matlab_html.html">
+<LINK REL="next" HREF="matlab_api_details.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A
+ HREF="matlab_api_details.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_html.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_html.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_api_details.html">MATLAB API Details</A>
+<B> Up:</B> <A
+ HREF="matlab_html.html">Gurobi Optimizer Reference Manual</A>
+<B> Previous:</B> <A
+ HREF="matlab_html.html">Gurobi Optimizer Reference Manual</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H1><A ID="SECTION00010000000000000000">
+MATLAB API Overview</A>
+</H1>
+<A ID="matlab:MATLAB"></A>
+<P>
+This section documents the Gurobi MATLAB&reg; interface. For those of you
+who are not familiar with MATLAB, it is an environment for doing numerical computing.  Please visit the
+<A ID="tex2html1"
+  HREF="https://www.mathworks.com/products/matlab">MATLAB web site</A> for more information.
+This manual begins with a quick overview of the methods provided by
+our MATLAB API.  It then continues with a
+
+<A HREF="matlab_api_details.html#sec:MATLAB"><TT>comprehensive presentation</TT></A> of all of the available methods, their
+arguments, and their return values.
+
+<P>
+If you are new to the Gurobi Optimizer, we suggest that you start with
+the <A ID="tex2html3"
+  HREF="https://www.gurobi.com/documentation/10.0/quickstart_windows/index.html">Quick Start Guide</A> or the
+<A ID="tex2html4"
+  HREF="https://www.gurobi.com/documentation/10.0/examples/examples.html">Example Tour</A> of the reference manual.  These
+documents provide concrete examples of how to use the methods
+described here.
+
+<P>
+The MATLAB Optimization Toolbox provides its own
+interface for building optimization models (starting with version
+2017b).  Gurobi supports this interface as well.  We'll discuss this
+aspect in the <A ID="tex2html5"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/matlab_using_gurobi_within.html">problem-based
+modeling</A>
+section;
+consult also the <TT>linprog</TT>, <TT>intlinprog</TT>,
+<TT>opttoolbox_lp</TT>, and <TT>opttoolbox_mip1</TT>  
+examples in the Gurobi distribution for illustrations of how to pass
+models built using this interface to Gurobi.
+
+<P>
+A quick note for new users: the convention in math programming is that
+variables are non-negative unless specified otherwise.  You'll need to
+explicitly set lower bounds if you want variables to be able to take
+negative values.
+
+<P>
+<SPAN  CLASS="textbf">Models</SPAN>
+<A ID="matlab:problem"></A>
+<P>
+Our Gurobi MATLAB interface enables you to express problems of the following form:
+
+<P>
+<TABLE class="PAD " style="">
+<TR><TD CLASS="LEFT">minimize</TD>
+<TD CLASS="LEFT"><!-- MATH
+ $x^TQx + c^Tx + \mathrm{alpha}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.86ex; vertical-align: -0.57ex; " SRC="img2.svg"
+ ALT="$x^TQx + c^Tx + \mathrm{alpha}$"></SPAN></TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+</TR>
+<TR><TD CLASS="LEFT">subject to</TD>
+<TD CLASS="LEFT"><SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.07ex; vertical-align: -0.12ex; " SRC="img3.svg"
+ ALT="$Ax = b$"></SPAN></TD>
+<TD CLASS="LEFT">(linear constraints)</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT"><!-- MATH
+ $\ell \le x \le u$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.39ex; vertical-align: -0.43ex; " SRC="img4.svg"
+ ALT="$\ell \le x \le u$"></SPAN></TD>
+<TD CLASS="LEFT">(bound constraints)</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">some <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.12ex; vertical-align: -0.78ex; " SRC="img5.svg"
+ ALT="$x_j$"></SPAN> integral</TD>
+<TD CLASS="LEFT">(integrality constraints)</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT"><!-- MATH
+ $x^TQc\, x + q^Tx \le \mathrm{beta}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.86ex; vertical-align: -0.57ex; " SRC="img6.svg"
+ ALT="$x^TQc\, x + q^Tx \le \mathrm{beta}$"></SPAN></TD>
+<TD CLASS="LEFT">(quadratic constraints)</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">some <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.81ex; vertical-align: -0.46ex; " SRC="img7.svg"
+ ALT="$x_i$"></SPAN> in SOS</TD>
+<TD CLASS="LEFT">(special ordered set constraints)</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">min, max, abs, or, ...</TD>
+<TD CLASS="LEFT">(general constraints)</TD>
+</TR>
+</TABLE>
+<BR>
+<BR>
+<BR>
+
+<P>
+Models are stored as <TT>struct</TT> variables, each consisting
+of multiple <EM>fields</EM>.  The fields capture the different model
+components listed above.  Many of these model components are
+optional. For example, integrality constraints may be omitted.
+
+<P>
+An optimization model may be loaded from a file (using the
+
+<A HREF="matlab_grb_read.html#matlab:gurobi_read"><TT>gurobi_read</TT></A> function),
+or it can be built by populating the appropriate fields of a model
+variable (using standard MATLAB constructs).  We will discuss the
+details of how models are represented in the 
+<A HREF="matlab_the_model_argument.html#matlab:model"><TT>model</TT></A> argument section.
+
+<P>
+We often refer to the <EM>class</EM> of an optimization model.  A
+model with a linear objective function, linear constraints, and
+continuous variables is a <EM>Linear Program (LP)</EM>.  If the
+objective is quadratic, the model is a <EM>Quadratic Program
+(QP)</EM>.  If any of the constraints are quadratic, the model is a
+<EM>Quadratically-Constrained Program (QCP)</EM>.  We will
+sometimes refer to a few special cases of QCP:
+QCPs with convex constraints,
+QCPs with non-convex constraints,
+<EM>bilinear programs</EM>,
+and <EM>Second-Order Cone Programs (SOCP)</EM>.
+If the model contains any integer variables,
+semi-continuous variables, semi-integer variables, Special Ordered Set
+(SOS) constraints, or general constraints, the model is a
+<EM>Mixed Integer Program (MIP)</EM>.  We'll also sometimes discuss
+special cases of MIP, including <EM>Mixed Integer Linear Programs
+(MILP)</EM>, <EM>Mixed Integer Quadratic Programs (MIQP)</EM>,
+<EM>Mixed Integer Quadratically-Constrained Programs (MIQCP)</EM>, and
+<EM>Mixed Integer Second-Order Cone Programs (MISOCP)</EM>.  The
+Gurobi Optimizer handles all of these model classes.
+
+<P>
+
+<SPAN  CLASS="textbf">Solving a Model</SPAN>
+
+<P>
+Once you have built a model, you can call
+
+<A HREF="matlab_grb.html#matlab:gurobi"><TT>gurobi</TT></A> to compute a
+solution. By default,
+
+<A HREF="matlab_grb.html#matlab:gurobi"><TT>gurobi</TT></A> will use the
+<A ID="tex2html6"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/concurrent_optimizer.html">concurrent optimizer</A>
+to solve LP
+models, the barrier algorithm to solve QP models and QCP models with
+convex constraints, and the
+branch-and-cut algorithm to solve mixed integer models.
+The solution is returned as a <TT>struct</TT> variable.
+We will discuss the details of
+how optimization results are represented when we discuss
+the 
+<A HREF="matlab_grb.html#matlab:gurobi"><TT>gurobi</TT></A> function.
+
+<P>
+Here is a simple example of a likely sequence of commands
+in the MATLAB API:
+<BR><TT>model  = gurobi_read('examples/data/stein9.mps');
+<BR>
+result = gurobi(model);
+<BR></TT>
+
+<P>
+
+<SPAN  CLASS="textbf">Multiple Solutions and Multiple Objectives</SPAN>
+
+<P>
+By default, the Gurobi Optimizer assumes that your goal is to find one
+proven optimal solution to a model with a single objective function.
+Gurobi provides features that allow you to relax either of these
+assumptions.  You should refer to the section on
+<A ID="tex2html7"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/solution_pool.html">Solution Pools</A>
+for information on how
+to request more than one solution, or the section on
+<A ID="tex2html8"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/multiple_objectives.html">Multiple Objectives</A>
+for
+information on how to specify multiple objective functions and control
+the trade-off between them.
+
+<P>
+
+<SPAN  CLASS="textbf">Infeasible Models</SPAN>
+
+<P>
+You have a few options if a model is found to be infeasible.  You can
+try to diagnose the cause of the infeasibility, attempt to repair the
+infeasibility, or both.  To obtain information that can be useful for
+diagnosing the cause of an infeasibility, call
+
+<A HREF="matlab_grb_iis.html#matlab:gurobi_iis"><TT>gurobi_iis</TT></A> to compute
+an Irreducible Inconsistent Subsystem (IIS).  This method can be used
+for both continuous and MIP models, but you should be aware that the
+MIP version can be quite expensive.
+We will discuss the details of how IIS results are represented in the
+
+<A HREF="matlab_grb_iis.html#matlab:gurobi_iis"><TT>gurobi_iis</TT></A> function documentation.
+
+<P>
+To attempt to repair an infeasibility, call
+
+<A HREF="matlab_grb_feasrelax.html#matlab:gurobi_feasrelax"><TT>gurobi_feasrelax</TT></A> 
+to compute a feasibility relaxation for the model. This relaxation
+allows you to find a solution that minimizes the magnitude of the
+constraint violation.
+
+<P>
+
+<SPAN  CLASS="textbf">Managing Parameters</SPAN>
+
+<P>
+The Gurobi optimizer provides a set of parameters that allow you to
+control many of the details of the optimization process.  Factors like
+feasibility and optimality tolerances, choices of algorithms,
+strategies for exploring the MIP search tree, etc., can be controlled
+by modifying Gurobi parameters before beginning the optimization.
+
+<P>
+Each Gurobi parameter has a default value.  Desired parameter changes
+are passed in a <TT>struct</TT> variable.  The name of each
+field within this struct must be the name of a Gurobi
+parameter, and the associated value should be the desired value of
+that parameter.  You can find a
+complete list of the available Gurobi parameters in the
+<A ID="tex2html9"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/parameters.html">reference manual</A>. We will provide additional
+details on changing parameter settings in the
+
+<A HREF="matlab_the_params_argument.html#matlab:params"><TT>params</TT></A> argument section.
+
+<P>
+
+<SPAN  CLASS="textbf">Monitoring Progress</SPAN>
+
+<P>
+Progress of the optimization can be monitored through Gurobi logging.
+By default, Gurobi will send output to the screen.  A few simple
+controls are available for modifying the default logging behavior.  If
+you would like to direct output to a file as well as to the screen,
+set the
+<A ID="tex2html10"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/logfile.html"><TT>LogFile</TT></A>
+parameter to the name
+of your desired log file.
+The frequency of logging output can be controlled with
+the
+<A ID="tex2html11"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/displayinterval.html">DisplayInterval</A>
+parameter, and logging can be turned off
+entirely with the
+<A ID="tex2html12"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/outputflag.html">OutputFlag</A>
+parameter.  A detailed
+description of the Gurobi log file can be found in the
+<A ID="tex2html13"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/logging.html">Logging</A>
+section of the reference manual.
+
+<P>
+
+<SPAN  CLASS="textbf">Error Handling</SPAN>
+
+<P>
+If unsuccessful, the methods of the Gurobi MATLAB interface
+will display an error code and an error message.  A list of possible
+error codes can be found in the
+<A ID="tex2html14"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/error_codes.html">Error Code</A>
+section in the reference manual.
+
+<P>
+
+<SPAN  CLASS="textbf">Environments and license parameters</SPAN>
+
+<P>
+By default, the various Gurobi functions will look for a valid license file
+and create a local Gurobi environment.
+This environment exists for as long as the corresponding
+MATLAB API function is running, and is released upon
+completion.
+
+<P>
+Another option is to provide licensing parameters through an optional
+<TT>params</TT> argument (also through a <TT>struct</TT>).  This argument
+allows you to solve the given problem on a Gurobi Compute Server, on Gurobi
+Instant Cloud, or using a Gurobi Cluster Manager.  We will discuss this topic
+further in the 
+<A HREF="matlab_the_params_argument.html#matlab:params"><TT>params</TT></A> 
+argument section.
+
+<P>
+Gurobi will check the current working directory for a file named
+<TT>gurobi.env</TT>, and it will attempt to read parameter settings
+from this file if it exists.  The file should be in
+<A ID="tex2html15"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/prm_format.html">PRM</A>
+format (briefly, each line should
+contain a parameter name, followed by the desired value for that
+parameter).
+
+<P>
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="matlab_api_details.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_html.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_html.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_api_details.html">MATLAB API Details</A>
+<B> Up:</B> <A
+ HREF="matlab_html.html">Gurobi Optimizer Reference Manual</A>
+<B> Previous:</B> <A
+ HREF="matlab_html.html">Gurobi Optimizer Reference Manual</A></DIV>
+<!--End of Navigation Panel-->
+
+</BODY>
+</HTML>

@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>Using Gurobi within MATLAB's Problem-Based Optimization</TITLE>
+<META NAME="description" CONTENT="Using Gurobi within MATLAB's Problem-Based Optimization">
+<META NAME="keywords" CONTENT="matlab_html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021.2">
+
+<LINK REL="STYLESHEET" HREF="matlab_html.css">
+
+<LINK REL="next" HREF="matlab_setting_up_the_grb_.html">
+<LINK REL="previous" HREF="matlab_input_output.html">
+<LINK REL="next" HREF="matlab_setting_up_the_grb_.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A
+ HREF="matlab_setting_up_the_grb_.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_api_details.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_grb_write.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_setting_up_the_grb_.html">Setting up the Gurobi</A>
+<B> Up:</B> <A
+ HREF="matlab_api_details.html">MATLAB API Details</A>
+<B> Previous:</B> <A
+ HREF="matlab_grb_write.html">gurobi_write()</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H2><A ID="SECTION00024000000000000000"></A>
+<A ID="matlab:problembased"></A>
+<BR>
+Using Gurobi within MATLAB's Problem-Based Optimization
+</H2>
+
+<P>
+Starting with release R2017b, the MATLAB Optimization Toolbox offers an
+alternative way to formulate optimization problems, coined &ldquo;Problem-Based
+Optimization&rdquo;.  In this section we'll explain how this modeling technique
+can be used in combination with the Gurobi solver.
+
+<P>
+The problem-based modeling approach uses an object-oriented paradigm for the
+components of an optimization problem; the optimization problem itself, the
+decision variables, and the linear constraints are represented by objects.
+Their creation and modification is effected through methods.  The complete
+documentation for problem-based optimization is part of the Optimization
+Toolbox; we will only walk through a simple example.  For this it is important
+that your MATLAB path contains Gurobi's example directory, which can be set
+as follows:
+
+<P>
+<SCRIPT SRC="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></SCRIPT>
+<BR>
+<PRE CLASS="prettyprint">addpath(fullfile(&lt;path_to_Gurobi&gt;, &lt;architecture&gt;, 'examples', 'matlab'));
+</PRE>
+
+<P>
+The first step is to create an optimization problem:
+<SCRIPT SRC="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></SCRIPT>
+<BR>
+<PRE CLASS="prettyprint">prob = optimproblem('ObjectiveSense','maximize');
+</PRE>
+
+<P>
+The variable <TT>prob</TT> now refers to an optimization problem object,
+which we have specified to be a maximization problem.  Next we create three
+non-negative optimization variables: <TT>x</TT>, <TT>y</TT>
+and <TT>z</TT>:
+<SCRIPT SRC="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></SCRIPT>
+<BR>
+<PRE CLASS="prettyprint">x = optimvar('x', 'LowerBound', 0);
+y = optimvar('y', 'LowerBound', 0);
+z = optimvar('z', 'LowerBound', 0);
+</PRE>
+
+<P>
+With these variables at hand, we now build linear expressions in order to set
+an objective function, and to add two linear constraints to <TT>prob</TT>:
+<SCRIPT SRC="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></SCRIPT>
+<BR>
+<PRE CLASS="prettyprint">prob.Objective = x + 2 * y + 3 * z;
+prob.Constraints.cons1 = x + y &lt;= 1;
+prob.Constraints.cons2 = y + z &lt;= 1;
+</PRE>
+
+<P>
+Finally we create an options object that guides <TT>prob</TT>'s solution
+method to the linear
+program solver function <TT>linprog</TT>, and call the <TT>solve</TT>
+method.
+<SCRIPT SRC="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></SCRIPT>
+<BR>
+<PRE CLASS="prettyprint">options = optimoptions('linprog');
+sol = solve(prob, options);
+</PRE>
+
+<P>
+Since the <TT>examples</TT> directory of the Gurobi installation has been
+added to the path in the very first step above, a bit of magic happens at
+this stage:  The directory contains a file <TT>linprog.m</TT>, so that the
+invocation of the <TT>solve</TT> method ends up calling this latter function
+instead of the built-in function <TT>linprog</TT> of MATLAB's Optimization
+Toolbox.  The following output from Gurobi will be shown on the console:
+
+<P>
+<TT>Gurobi Optimizer version 10.0.2 build v10.0.2rc0 (linux64)
+<BR></TT><PRE>
+Optimize a model with 2 rows, 3 columns and 4 nonzeros
+Model fingerprint: 0x3a4c68c2
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 3e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 2 rows and 3 columns
+Presolve time: 0.03s
+Presolve: All rows and columns removed
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0   -4.0000000e+00   0.000000e+00   0.000000e+00      0s
+
+Solved in 0 iterations and 0.05 seconds
+Optimal objective -4.000000000e+00
+</PRE>
+
+<P>
+The example we just discussed can be found in the <TT>examples</TT>
+directory in the file <TT>opttoolbox_lp.m</TT>.  The example <TT>opttoolbox_mip1.m</TT> shows an analogous problem formulation with integer
+variables, that uses the function <TT>intlinprog.m</TT>, also found in the
+Gurobi examples directory, as a surrogate for MATLAB's built-in counterpart.
+
+<P>
+The modeling constructs provided by the Optimization Toolbox do not cover
+all the features of Gurobi, e.g., SOS, semi-continuous variables and general
+constraints to name a few.  Moreover not all Gurobi parameters have
+equivalent counterparts in the option objects for <TT>linprog</TT> and
+<TT>intlinprog</TT>.  In order to use such features, Gurobi's own Matlab API
+should be used.
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="matlab_setting_up_the_grb_.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_api_details.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_grb_write.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_setting_up_the_grb_.html">Setting up the Gurobi</A>
+<B> Up:</B> <A
+ HREF="matlab_api_details.html">MATLAB API Details</A>
+<B> Previous:</B> <A
+ HREF="matlab_grb_write.html">gurobi_write()</A></DIV>
+<!--End of Navigation Panel-->
+
+</BODY>
+</HTML>

@@ -1,0 +1,239 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>gurobi_iis()</TITLE>
+<META NAME="description" CONTENT="gurobi_iis()">
+<META NAME="keywords" CONTENT="matlab_html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021.2">
+
+<LINK REL="STYLESHEET" HREF="matlab_html.css">
+
+<LINK REL="next" HREF="matlab_grb_feasrelax.html">
+<LINK REL="previous" HREF="matlab_grb.html">
+<LINK REL="next" HREF="matlab_grb_feasrelax.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A
+ HREF="matlab_grb_feasrelax.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_solving_a_model.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_grb.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_grb_feasrelax.html">gurobi_feasrelax()</A>
+<B> Up:</B> <A
+ HREF="matlab_solving_a_model.html">Solving a Model</A>
+<B> Previous:</B> <A
+ HREF="matlab_grb.html">gurobi()</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H3><A ID="SECTION00022200000000000000">
+gurobi_iis()</A>
+</H3>
+<A ID="matlab:gurobi_iis"></A>
+
+<TABLE class="PAD " style="">
+<TR><TD CLASS="LEFT"><FONT COLOR="#801a1a"> <SPAN CLASS="LARGE"><SPAN  CLASS="textbf">gurobi_iis</SPAN></SPAN> </FONT></TD>
+<TD CLASS="LEFT">( model )</TD>
+</TR>
+<TR><TD CLASS="LEFT"><FONT COLOR="#801a1a"> <SPAN CLASS="LARGE"><SPAN  CLASS="textbf">gurobi_iis</SPAN></SPAN> </FONT></TD>
+<TD CLASS="LEFT">( model, params )</TD>
+</TR>
+</TABLE>
+
+
+<P>
+Compute an Irreducible Inconsistent Subsystem (IIS).
+
+<P>
+An IIS is a subset of the constraints and variable bounds with the following
+properties:
+
+<UL>
+<LI>It is still infeasible, and
+</LI>
+<LI>If a single constraint or bound is removed, the subsystem becomes
+feasible.
+</LI>
+</UL>
+Note that an infeasible model may have multiple IISs. The one returned
+by Gurobi is not necessarily the smallest one; there may exist others
+with fewer constraints or bounds.
+
+<P>
+You can obtain information about the outcome of the IIS
+computation from the returned IIS result (described below).
+Note that this method can be used to compute IISs for both continuous
+and MIP models.
+
+<P>
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Arguments:</SPAN></SPAN>
+
+<P>
+ <SPAN  CLASS="textbf">model</SPAN>: The model <TT>struct</TT> must contain a valid Gurobi model.
+See the 
+<A HREF="matlab_the_model_argument.html#matlab:model"><TT>model</TT></A> argument section
+for more information.
+
+<P>
+ <SPAN  CLASS="textbf">params</SPAN>: The params <TT>struct</TT>, when provided, contains a list of modified Gurobi parameters. See the
+
+<A HREF="matlab_the_params_argument.html#matlab:params"><TT>params</TT></A> argument section
+for more information.
+
+<P>
+
+<P>
+
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Example usage:</SPAN></SPAN>
+<BR><TT>model = gurobi_read('examples/data/klein1.mps');
+<BR>
+iis = gurobi_iis(model);
+<BR></TT>
+
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Return value:</SPAN></SPAN>
+
+<P>
+
+<P>
+The <TT>gurobi_iis()</TT> function returns a <TT>struct</TT>,
+with various results stored in its fields. The specific
+results that are available depend on the type of model.
+
+<P>
+The returned <TT>struct</TT> will always contain the following
+<TT>fields</TT>:
+<DL>
+<DT><STRONG>minimal</STRONG></DT>
+<DD>A logical scalar that indicates whether the computed
+  IIS is minimal. It will normally be true, but it may be false if the
+  IIS computation was stopped early (due to a time limit or a user
+  interrupt).
+</DD>
+<DT><STRONG>Arows</STRONG></DT>
+<DD>A logical vector that indicates whether a linear constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>lb</STRONG></DT>
+<DD>A logical vector that indicates whether a lower bound appears in the computed IIS.
+</DD>
+<DT><STRONG>ub</STRONG></DT>
+<DD>A logical vector that indicates whether a upper bound appears in the computed IIS.
+</DD>
+</DL>
+
+<P>
+If your model contains general constraints, the returned <TT>struct</TT> 
+will also contain the following <TT>fields</TT>:
+<DL>
+<DT><STRONG>genconmax</STRONG></DT>
+<DD>A logical vector that indicates whether a general MAX constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconmin</STRONG></DT>
+<DD>A logical vector that indicates whether a general MIN constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconand</STRONG></DT>
+<DD>A logical vector that indicates whether a general AND constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconor</STRONG></DT>
+<DD>A logical vector that indicates whether a general OR constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconabs</STRONG></DT>
+<DD>A logical vector that indicates whether a general ABS constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconind</STRONG></DT>
+<DD>A logical vector that indicates whether a general INDICATOR constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconpwl</STRONG></DT>
+<DD>A logical vector that indicates whether a general piecewise-linear function constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconpoly</STRONG></DT>
+<DD>A logical vector that indicates whether a polynomial function constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconexp</STRONG></DT>
+<DD>A logical vector that indicates whether a natural exponential function constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconexpa</STRONG></DT>
+<DD>A logical vector that indicates whether a exponential function constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconlog</STRONG></DT>
+<DD>A logical vector that indicates whether a natural logarithmic function constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconloga</STRONG></DT>
+<DD>A logical vector that indicates whether a logarithmic function constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconlogistic</STRONG></DT>
+<DD>A logical vector that indicates whether a logistic function constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconpow</STRONG></DT>
+<DD>A logical vector that indicates whether a power function constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconsin</STRONG></DT>
+<DD>A logical vector that indicates whether a SIN function constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>genconcos</STRONG></DT>
+<DD>A logical vector that indicates whether a COS function constraint appears in the computed IIS.
+</DD>
+<DT><STRONG>gencontan</STRONG></DT>
+<DD>A logical vector that indicates whether a TAN function constraint appears in the computed IIS.
+</DD>
+</DL>
+
+<P>
+If your model contains SOS constraints, the returned <TT>struct</TT> 
+will also contain the following <TT>field</TT>:
+<DL>
+<DT><STRONG>sos</STRONG></DT>
+<DD>A logical vector that indicates whether an SOS constraint
+  appears in the computed IIS
+</DD>
+</DL>
+
+<P>
+If your model contains quadratic constraints, the returned
+<TT>struct</TT> will also contain the following <TT>field</TT>:
+<DL>
+<DT><STRONG>quadcon</STRONG></DT>
+<DD>A logical vector that indicates whether a quadratic constraint appears in the computed IIS.
+</DD>
+</DL>
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="matlab_grb_feasrelax.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_solving_a_model.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_grb.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_grb_feasrelax.html">gurobi_feasrelax()</A>
+<B> Up:</B> <A
+ HREF="matlab_solving_a_model.html">Solving a Model</A>
+<B> Previous:</B> <A
+ HREF="matlab_grb.html">gurobi()</A></DIV>
+<!--End of Navigation Panel-->
+
+</BODY>
+</HTML>

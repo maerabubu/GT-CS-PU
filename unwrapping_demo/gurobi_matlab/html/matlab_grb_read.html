@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>gurobi_read()</TITLE>
+<META NAME="description" CONTENT="gurobi_read()">
+<META NAME="keywords" CONTENT="matlab_html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021.2">
+
+<LINK REL="STYLESHEET" HREF="matlab_html.css">
+
+<LINK REL="next" HREF="matlab_grb_write.html">
+<LINK REL="previous" HREF="matlab_input_output.html">
+<LINK REL="next" HREF="matlab_grb_write.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A
+ HREF="matlab_grb_write.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_input_output.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_input_output.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_grb_write.html">gurobi_write()</A>
+<B> Up:</B> <A
+ HREF="matlab_input_output.html">Input/Output</A>
+<B> Previous:</B> <A
+ HREF="matlab_input_output.html">Input/Output</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H3><A ID="SECTION00023100000000000000">
+gurobi_read()</A>
+</H3>
+<A ID="matlab:gurobi_read"></A>
+
+<TABLE class="PAD " style="">
+<TR><TD CLASS="LEFT"><FONT COLOR="#801a1a"> <SPAN CLASS="LARGE"><SPAN  CLASS="textbf">gurobi_read</SPAN></SPAN> </FONT></TD>
+<TD CLASS="LEFT">( filename )</TD>
+</TR>
+<TR><TD CLASS="LEFT"><FONT COLOR="#801a1a"> <SPAN CLASS="LARGE"><SPAN  CLASS="textbf">gurobi_read</SPAN></SPAN> </FONT></TD>
+<TD CLASS="LEFT">( filename, params )</TD>
+</TR>
+</TABLE>
+
+
+<P>
+Reads a model from a file.
+
+<P>
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Arguments:</SPAN></SPAN>
+
+<P>
+ <SPAN  CLASS="textbf">filename</SPAN>: Name of the file to read. Note that the type of
+  the file is encoded in the file name suffix. The filename suffix
+  should be one of .mps, .rew, .lp, .rlp, .dua, .dlp, .ilp, or .opb
+  (see the
+  <A ID="tex2html40"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/model_file_formats.html">file formats</A> 
+
+section for details on Gurobi file
+  formats). The files can be compressed, so additional suffixes of
+  .gz, .bz2, .zip, or .7z are accepted.
+
+<P>
+ <SPAN  CLASS="textbf">params</SPAN>: The params <TT>struct</TT>, when provided, contains a list of modified Gurobi parameters. See the
+
+<A HREF="matlab_the_params_argument.html#matlab:params"><TT>params</TT></A> argument section
+for more information.
+
+<P>
+
+<P>
+
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Return value:</SPAN></SPAN>
+
+<P>
+A <TT>model</TT> struct variable,
+as described in the 
+<A HREF="matlab_the_model_argument.html#matlab:model"><TT>model</TT></A> section.
+
+<P>
+
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Example usage:</SPAN></SPAN>
+<BR><TT>model  = gurobi_read('stein9.mps');
+<BR>
+result = gurobi(model);
+<BR></TT>
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="matlab_grb_write.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_input_output.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_input_output.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_grb_write.html">gurobi_write()</A>
+<B> Up:</B> <A
+ HREF="matlab_input_output.html">Input/Output</A>
+<B> Previous:</B> <A
+ HREF="matlab_input_output.html">Input/Output</A></DIV>
+<!--End of Navigation Panel-->
+
+</BODY>
+</HTML>

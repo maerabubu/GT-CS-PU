@@ -1,0 +1,184 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>gurobi_feasrelax()</TITLE>
+<META NAME="description" CONTENT="gurobi_feasrelax()">
+<META NAME="keywords" CONTENT="matlab_html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021.2">
+
+<LINK REL="STYLESHEET" HREF="matlab_html.css">
+
+<LINK REL="next" HREF="matlab_grb_relax.html">
+<LINK REL="previous" HREF="matlab_grb_iis.html">
+<LINK REL="next" HREF="matlab_grb_relax.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A
+ HREF="matlab_grb_relax.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_solving_a_model.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_grb_iis.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_grb_relax.html">gurobi_relax()</A>
+<B> Up:</B> <A
+ HREF="matlab_solving_a_model.html">Solving a Model</A>
+<B> Previous:</B> <A
+ HREF="matlab_grb_iis.html">gurobi_iis()</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H3><A ID="SECTION00022300000000000000">
+gurobi_feasrelax()</A>
+</H3>
+<A ID="matlab:gurobi_feasrelax"></A>
+
+<TABLE class="PAD " style="">
+<TR><TD CLASS="LEFT"><FONT COLOR="#801a1a"> <SPAN CLASS="LARGE"><SPAN  CLASS="textbf">gurobi_feasrelax</SPAN></SPAN> </FONT></TD>
+<TD CLASS="LEFT">( model, relaxobjtype, minrelax, penalties )</TD>
+</TR>
+<TR><TD CLASS="LEFT"><FONT COLOR="#801a1a"> <SPAN CLASS="LARGE"><SPAN  CLASS="textbf">gurobi_feasrelax</SPAN></SPAN> </FONT></TD>
+<TD CLASS="LEFT">( model, relaxobjtype, minrelax, penalties, params )</TD>
+</TR>
+</TABLE>
+
+
+<P>
+This function computes a feasibility relaxation for the input
+<TT>model</TT> argument.  The feasibility relaxation is a model
+that, when solved, minimizes the amount by which the solution violates
+the bounds and linear constraints of the original model.  You must
+provide a penalty to associate with relaxing each individual bound or
+constraint (through the <TT>penalties</TT> argument).  These
+penalties are interpreted in different ways, depending on the value of
+the <TT>relaxobjtype</TT> argument.
+
+<P>
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Arguments:</SPAN></SPAN>
+
+<P>
+ <SPAN  CLASS="textbf">model</SPAN>: The model <TT>struct</TT> must contain a valid Gurobi model.
+See the 
+<A HREF="matlab_the_model_argument.html#matlab:model"><TT>model</TT></A> argument section
+for more information.
+
+<P>
+ <SPAN  CLASS="textbf">relaxobjtype</SPAN>: The approach used to impose penalties on violations.
+<BR>
+If you specify <TT>relaxobjtype=0</TT>, the objective for the
+feasibility relaxation is to minimize the sum of the weighted
+magnitudes of the bound and constraint violations.
+<BR>
+If you specify <TT>relaxobjtype=1</TT>, the objective for the
+feasibility relaxation is to minimize the weighted sum of the squares
+of the bound and constraint violations.
+<BR>
+If you specify <TT>relaxobjtype=2</TT>, the objective for the
+feasibility relaxation is to minimize the weighted count of bound and
+constraint violations.
+<BR>
+In all cases, the weights are taken from <TT>penalties.lb</TT>, <TT>penalties.ub</TT> and
+<TT>penalties.rhs</TT>. You can provide the special
+penalty value <TT>Inf</TT> to indicate that the corresponding bound or
+constraint cannot be relaxed.
+
+<P>
+ <SPAN  CLASS="textbf">minrelax</SPAN>: The <TT>minrelax</TT> argument is a boolean
+that controls the type of feasibility relaxation that is created.  If
+<TT>minrelax=false</TT>, optimizing the returned model gives a
+solution that minimizes the cost of the violation.  If <TT>minrelax=true</TT>, optimizing the returned model finds a solution that
+minimizes the original objective, but only from among those solutions
+that minimize the cost of the violation.  Note that <TT>gurobi_feasrelax</TT> must solve an optimization problem to find the
+minimum possible relaxation when <TT>minrelax=true</TT>, which can
+be quite expensive.
+
+<P>
+ <SPAN  CLASS="textbf">penalties</SPAN>: The <TT>penalties</TT> argument is a
+struct array, having the following optional fields (default:
+all <TT>Inf</TT>):
+<BR>  <TT>lb</TT> Penalty for violating each lower bound.
+<BR>  <TT>ub</TT> Penalty for violating each upper bound.
+<BR>  <TT>rhs</TT> Penalty for violating each constraint.
+
+<P>
+To give an example, if a constraint with <TT>penalties.rhs</TT> value
+<TT>p</TT> is violated by 2.0,
+it would contribute <TT>2*p</TT> to the
+feasibility relaxation objective for <TT>relaxobjtype=0</TT>,
+<TT>2*2*p</TT> for <TT>relaxobjtype=1</TT>, and
+<TT>p</TT> for <TT>relaxobjtype=2</TT>.
+
+<P>
+ <SPAN  CLASS="textbf">params</SPAN>: The params <TT>struct</TT>, when provided, contains a list of modified Gurobi parameters. See the
+
+<A HREF="matlab_the_params_argument.html#matlab:params"><TT>params</TT></A> argument section
+for more information.
+
+<P>
+
+<P>
+
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Return value:</SPAN></SPAN>
+
+<P>
+A <TT>struct</TT> containing two fields:
+<BR><TT>result.model</TT>, a struct variable, as described
+in the 
+<A HREF="matlab_the_model_argument.html#matlab:model"><TT>model</TT></A> argument section.
+<BR><TT>result.feasobj</TT>, a scalar. If <TT>minrelax==true</TT> this is the relaxation problem objective value,
+0.0 otherwise.
+
+<P>
+
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Example usage:</SPAN></SPAN>
+<BR><TT>
+model  = gurobi_read('stein9.mps');
+<BR>
+penalties.lb = ones(length(model.lb),1);
+<BR>
+penalties.ub = ones(length(model.ub),1);
+<BR>
+penalties.rhs = ones(length(model.rhs),1);
+<BR>
+feasrelaxresult  = gurobi_feasrelax(model, 0, false, penalties);
+<BR></TT>
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="matlab_grb_relax.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_solving_a_model.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_grb_iis.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_grb_relax.html">gurobi_relax()</A>
+<B> Up:</B> <A
+ HREF="matlab_solving_a_model.html">Solving a Model</A>
+<B> Previous:</B> <A
+ HREF="matlab_grb_iis.html">gurobi_iis()</A></DIV>
+<!--End of Navigation Panel-->
+
+</BODY>
+</HTML>

@@ -1,0 +1,260 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>The params argument</TITLE>
+<META NAME="description" CONTENT="The params argument">
+<META NAME="keywords" CONTENT="matlab_html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021.2">
+
+<LINK REL="STYLESHEET" HREF="matlab_html.css">
+
+<LINK REL="previous" HREF="matlab_the_model_argument.html">
+<LINK REL="next" HREF="matlab_solving_a_model.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A
+ HREF="matlab_solving_a_model.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_common_arguments.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_the_model_argument.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_solving_a_model.html">Solving a Model</A>
+<B> Up:</B> <A
+ HREF="matlab_common_arguments.html">Common Arguments</A>
+<B> Previous:</B> <A
+ HREF="matlab_the_model_argument.html">The model argument</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H3><A ID="SECTION00021200000000000000">
+The params argument</A>
+</H3>
+<A ID="matlab:params"></A>
+As mentioned previously, the Gurobi optimizer provides a set of
+parameters that allow you to control many of the details of the
+optimization process.  Factors like feasibility and optimality
+tolerances, choices of algorithms, strategies for exploring the MIP
+search tree, etc., can be controlled by modifying Gurobi parameters
+before beginning the optimization.
+
+<P>
+
+<P>
+Parameter changes are specified using a <TT>struct</TT> 
+variable having multiple <TT>fields</TT>, which is passed as
+an argument to the appropriate Gurobi function (e.g.,
+
+<A HREF="matlab_grb.html#matlab:gurobi"><TT>gurobi</TT></A>).  The name of each field must be the name
+of a Gurobi parameter, and the associated value should be the desired
+value of that parameter.  You can find a complete list of the
+available Gurobi parameters in the
+<A ID="tex2html28"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/parameters.html">reference manual</A>.
+
+<P>
+To create a struct that would set the Gurobi
+<A ID="tex2html29"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/method.html"><TT>Method</TT></A> parameter to 2 and the
+<A ID="tex2html30"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/resultfile.html"><TT>ResultFile</TT></A> parameter to
+<TT>model.mps</TT>, you would do the following:
+<BR>
+<BR><TT>
+params.Method = 2;
+<BR>
+params.ResultFile = 'model.mps';
+<BR></TT>
+
+<P>
+We should say a bit more about the <TT>ResultFile</TT> parameter.
+If this parameter is set, the optimization model that is eventually
+passed to Gurobi will also be output to the specified file. The
+filename suffix should be one of <TT>.mps</TT>, <TT>.lp</TT>,
+<TT>.rew</TT>, <TT>.rlp</TT>, <TT>.dua</TT>, or<TT>.dlp</TT>,
+to indicate the desired file format (see the
+<A ID="tex2html31"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/model_file_formats.html">file format</A> 
+section in the reference manual for details on Gurobi file formats).
+
+<P>
+The params struct can also be used to set license specific parameters,
+that define the computational environment to be used.  We will discuss
+the two most common use cases next, and refer again to the collection
+of all available parameters in the <A ID="tex2html32"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/parameters.html">reference manual</A>.
+
+<P>
+<SPAN  CLASS="textbf">Using a Compute Server License</SPAN>
+
+<P>
+Gurobi Compute Server allows you to offload optimization jobs to a
+remote server.  Servers are organized into clusters.  By providing the
+name of any node within the cluster, your job will automatically be
+sent to the least heavily loaded node in the cluster.  If all nodes
+are at capacity, your job will be placed in a queue, and will proceed
+once capacity becomes available.  You can find additional information
+about Gurobi Compute Server in the <A ID="tex2html27"
+  HREF="https://www.gurobi.com/documentation/10.0/remoteservices/remoteservices.html">Gurobi Remote Services Reference Manual</A>.  The most
+commonly used parameters are the following.
+
+<P>
+<DL>
+<DT><STRONG>ComputeServer</STRONG></DT>
+<DD>A Compute Server.  You can refer to the server
+using its name or its IP address.  If you are using a non-default
+port, the server name should be followed by the port number (e.g.,
+<TT>server1:61000</TT>).
+
+<P>
+</DD>
+<DT><STRONG>ServerPassword (optional)</STRONG></DT>
+<DD>User password on the Compute Server
+cluster. Obtain this from your Compute Server administrator.
+
+<P>
+</DD>
+<DT><STRONG>CSPriority (optional)</STRONG></DT>
+<DD>The priority of the job.  Priorities must
+be between -100 and 100, with a default value of 0 (by convention).
+Higher priority jobs are chosen from the server job queue before lower
+priority jobs.  A job with priority 100 runs immediately, bypassing
+the job queue and ignoring the job limit on the server. You should
+exercise caution with priority 100 jobs, since they can severely
+overload a server, which can cause jobs to fail, and in extreme cases
+can cause the server to crash.
+
+<P>
+</DD>
+<DT><STRONG>CSRouter (optional)</STRONG></DT>
+<DD>The router for the Compute Server cluster.  A
+router can be used to improve the robustness of a Compute Server
+deployment.  You can refer to the router using either its name or its
+IP address.  A typical Remote Services deployment won't use a router,
+so you typically won't need to set this.
+
+<P>
+</DD>
+<DT><STRONG>CSTLSinsecure (optional)</STRONG></DT>
+<DD>Indicates whether to use insecure mode
+  in the TLS (Transport Layer Security).  Set this to 0 unless your
+  server administrator tells you otherwise.
+</DD>
+</DL>
+
+<P>
+Here is an example of how to use a <TT>params</TT> argument to connect
+to a Compute Server:
+<BR>
+<BR><TT>
+params.ComputeServer = 'server1.mycompany.com:61000';
+<BR>
+params.CSPriority    = 5;
+<BR></TT>
+
+<P>
+
+<SPAN  CLASS="textbf">Using a Gurobi Instant Cloud License</SPAN>
+
+<P>
+Gurobi Instant Cloud allows you to offload optimization jobs to
+a Gurobi Compute Server on the cloud.  If an appropriate
+machine is already running, the job will run on that machine.
+It will automatically launch a new machine otherwise.
+Note that launching a new machine can take a few minutes.
+You can find additional information about the Gurobi Instant Cloud
+service in the <A ID="tex2html33"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/gurobi_instant_cloud.html">reference manual</A>.  The most
+commonly used parameters are the following.
+
+<P>
+<DL>
+<DT><STRONG>CloudAccessID</STRONG></DT>
+<DD>The access ID for your Gurobi Instant Cloud license.
+This can be retrieved from the Gurobi Instant Cloud website.  When
+used in combination with your <TT>CloudSecretKey</TT>, this allows you
+to launch Instant Cloud instances and submit jobs to them.
+
+<P>
+</DD>
+<DT><STRONG>CloudSecretKey</STRONG></DT>
+<DD>The secret key for your Gurobi Instant Cloud license.
+This can be retrieved from the Gurobi Instant Cloud website.  When
+used in combination with your <TT>CloudAccessID</TT>, this allows you to
+launch Instant Cloud instances and submit jobs to them.  Note that you
+should keep your secret key private.
+
+<P>
+</DD>
+<DT><STRONG>CloudPool (optional)</STRONG></DT>
+<DD>The machine pool.  Machine pools allow you to
+create fixed configurations on the Instant Cloud website (capturing
+things like type of machine, geographic region, etc.), and then launch
+and share machines from client programs without having to restate
+configuration information each time you launch a machine. If not
+provided, your job will be launched in the default pool associated
+with your cloud license.
+
+<P>
+</DD>
+<DT><STRONG>CSPriority (optional)</STRONG></DT>
+<DD>The priority of the job.  Priorities must
+be between -100 and 100, with a default value of 0 (by convention).
+Higher priority jobs are chosen from the server job queue before lower
+priority jobs.  A job with priority 100 runs immediately, bypassing
+the job queue and ignoring the job limit on the server. You should
+exercise caution with priority 100 jobs, since they can severely
+overload a server, which can cause jobs to fail, and in extreme cases
+can cause the server to crash.
+</DD>
+</DL>
+
+<P>
+Here is an example of how to use a <TT>params</TT> argument to launch a
+Gurobi Instant Cloud instance:
+<BR>
+<BR><TT>
+params.CloudAccessID  = '3d1ecef9-dfad-eff4-b3fa';
+<BR>
+params.CloudSecretKey = 'ae6L23alJe3+fas';
+<BR></TT>
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="matlab_solving_a_model.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_common_arguments.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_the_model_argument.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_solving_a_model.html">Solving a Model</A>
+<B> Up:</B> <A
+ HREF="matlab_common_arguments.html">Common Arguments</A>
+<B> Previous:</B> <A
+ HREF="matlab_the_model_argument.html">The model argument</A></DIV>
+<!--End of Navigation Panel-->
+
+</BODY>
+</HTML>

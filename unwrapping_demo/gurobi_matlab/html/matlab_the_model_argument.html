@@ -1,0 +1,1837 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>The model argument</TITLE>
+<META NAME="description" CONTENT="The model argument">
+<META NAME="keywords" CONTENT="matlab_html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021.2">
+
+<LINK REL="STYLESHEET" HREF="matlab_html.css">
+
+<LINK REL="next" HREF="matlab_the_params_argument.html">
+<LINK REL="previous" HREF="matlab_common_arguments.html">
+<LINK REL="next" HREF="matlab_the_params_argument.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A
+ HREF="matlab_the_params_argument.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_common_arguments.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_common_arguments.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_the_params_argument.html">The params argument</A>
+<B> Up:</B> <A
+ HREF="matlab_common_arguments.html">Common Arguments</A>
+<B> Previous:</B> <A
+ HREF="matlab_common_arguments.html">Common Arguments</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H3><A ID="SECTION00021100000000000000">
+The model argument</A>
+</H3>
+<A ID="matlab:model"></A>
+Model variables store optimization problems (as described in the
+
+<A HREF="matlab_api_overview.html#matlab:problem"><TT>problem</TT></A> statement).
+
+<P>
+Models can be built in a number of ways.  You can
+populate the appropriate fields of the
+<TT>model</TT> struct using standard MATLAB routines.
+You can also read a model from a file, using 
+<A HREF="matlab_grb_read.html#matlab:gurobi_read"><TT>gurobi_read</TT></A>.
+A few API functions (
+<A HREF="matlab_grb_feasrelax.html#matlab:gurobi_feasrelax"><TT>gurobi_feasrelax</TT></A> and
+
+<A HREF="matlab_grb_relax.html#matlab:gurobi_relax"><TT>gurobi_relax</TT></A>) also return models.
+
+<P>
+Note that all vector fields within the <TT>model</TT> variable must be dense vectors
+except for the linear part of the quadratic constraints and INDICATOR general constraints,
+all matrix fields must be
+sparse matrices, and all strings, names, etc. must be
+<TT>char</TT> arrays.
+
+<P>
+The following is an enumeration of all of the fields of the
+<TT>model</TT> argument that Gurobi will take into account when
+optimizing the model:
+
+<P>
+<SPAN  CLASS="textbf">Commonly used fields</SPAN>
+
+<P>
+<DL>
+<DT><STRONG>A</STRONG></DT>
+<DD>The linear constraint matrix.
+
+<P>
+</DD>
+<DT><STRONG>obj (optional)</STRONG></DT>
+<DD>The linear objective vector (the <TT>c</TT>
+  vector in the 
+<A HREF="matlab_api_overview.html#matlab:problem"><TT>problem</TT></A> statement).
+  When present, you must specify one value for each column of
+  <TT>A</TT>. When absent, each variable has a default objective
+  coefficient of 0.
+
+<P>
+</DD>
+<DT><STRONG>sense (optional)</STRONG></DT>
+<DD>The senses of the linear constraints. Allowed
+values are <TT>=</TT>, <TT>&lt;</TT>, or <TT>&gt;</TT>.
+You must specify one value for each row of <TT>A</TT>, or
+a single value to specify that all constraints have the same sense.
+When absent, all senses default to <TT>&lt;</TT>.
+
+<P>
+</DD>
+<DT><STRONG>rhs (optional)</STRONG></DT>
+<DD>The right-hand side vector for the linear
+constraints (<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.07ex; vertical-align: -0.12ex; " SRC="img8.svg"
+ ALT="$b$"></SPAN> in the 
+<A HREF="matlab_api_overview.html#matlab:problem"><TT>problem</TT></A> statement).
+You must specify one value for each row of <TT>A</TT>.  When absent,
+the right-hand side vector defaults to the zero vector.
+
+<P>
+</DD>
+<DT><STRONG>lb (optional)</STRONG></DT>
+<DD>The lower bound vector. When present, you must
+specify one value for each column of <TT>A</TT>. When absent, each
+variable has a default lower bound of 0.
+
+<P>
+</DD>
+<DT><STRONG>ub (optional)</STRONG></DT>
+<DD>The upper bound vector. When present, you must
+specify one value for each column of <TT>A</TT>. When absent, the
+variables have infinite upper bounds.
+
+<P>
+</DD>
+<DT><STRONG>vtype (optional)</STRONG></DT>
+<DD>The variable types. This vector is used to
+capture variable integrality constraints. Allowed values are
+<TT>C</TT> (continuous), <TT>B</TT> (binary), <TT>I</TT> (integer), <TT>S</TT> (semi-continuous), or <TT>N</TT>
+(semi-integer). Binary variables must be either 0 or 1. Integer
+variables can take any integer value between the specified lower and
+upper bounds. Semi-continuous variables can take any value between
+the specified lower and upper bounds, or a value of zero.
+Semi-integer variables can take any integer value between the
+specified lower and upper bounds, or a value of zero. When present,
+you must specify one value for each column of <TT>A</TT>, or a
+single value to specify that all variables have the same type. When
+absent, each variable is treated as being continuous. Refer to the
+<A ID="tex2html16"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/variables.html">variable section</A> 
+of the reference manual for more information on variable types.
+
+<P>
+</DD>
+<DT><STRONG>modelsense (optional)</STRONG></DT>
+<DD>The optimization sense. Allowed values
+are <TT>min</TT> (minimize) or <TT>max</TT> (maximize).
+When absent, the default optimization sense is minimization.
+
+<P>
+</DD>
+<DT><STRONG>modelname (optional)</STRONG></DT>
+<DD>The name of the model. The name appears
+in the Gurobi log, and when writing a model to a file.
+
+<P>
+</DD>
+<DT><STRONG>objcon (optional)</STRONG></DT>
+<DD>The constant offset in the objective function
+ (<!-- MATH
+ $\mathrm{alpha}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.52ex; vertical-align: -0.57ex; " SRC="img9.svg"
+ ALT="$\mathrm{alpha}$"></SPAN> in the 
+<A HREF="matlab_api_overview.html#matlab:problem"><TT>problem</TT></A> statement).
+
+<P>
+</DD>
+<DT><STRONG>varnames (optional)</STRONG></DT>
+<DD>The variable names vector. A cell array.
+When present, each element of this vector defines the name of a
+variable. You must specify a name for each column of <TT>A</TT>.
+
+<P>
+</DD>
+<DT><STRONG>constrnames (optional)</STRONG></DT>
+<DD>The constraint names vector. A
+cell array. When present, each element of the vector defines the
+name of a constraint. You must specify a name for each row of
+<TT>A</TT>.
+
+<P>
+</DD>
+</DL>
+
+<P>
+
+<SPAN  CLASS="textbf">Quadratic objective and constraint fields</SPAN>
+
+<P>
+<DL>
+<DT><STRONG>Q (optional)</STRONG></DT>
+<DD>The quadratic objective matrix. When present,
+<TT>Q</TT> must be a square matrix whose row and column counts are
+equal to the number of columns in <TT>A</TT>.
+
+<P>
+</DD>
+<DT><STRONG>quadcon (optional)</STRONG></DT>
+<DD>The quadratic constraints. A struct array. When
+present, each element in <TT>quadcon</TT> defines a single quadratic
+constraint:
+<!-- MATH
+ $x^TQc\, x + q^Tx \le \mathrm{beta}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.86ex; vertical-align: -0.57ex; " SRC="img6.svg"
+ ALT="$x^TQc\, x + q^Tx \le \mathrm{beta}$"></SPAN>.
+
+<P>
+The <TT>Qc</TT> matrix must be a square matrix whose row and column counts
+are equal to the number of columns of <TT>A</TT>. There are
+two options to store the matrix: (i) in
+<TT>model.quadcon(i).Qc</TT> as a sparse
+matrix; (ii) through three dense vectors
+<TT>model.quadcon(i).Qrow</TT>,
+<TT>model.quadcon(i).Qcol</TT>, and
+<TT>model.quadcon(i).Qval</TT> specifying
+the matrix in triple format, with row indices, column indices, and
+values, respectively.
+
+<P>
+The optional <TT>q</TT> vector defines the linear terms in the constraint.
+It can be a dense vector specifying a value for each column of <TT>A</TT> or
+a sparse vector (sparse n-by-1 matrix). It is stored in
+<TT>model.quadcon(i).q</TT>.
+
+<P>
+The scalar <TT>beta</TT> is stored in <TT>model.quadcon(i).rhs</TT>. It defines the
+right-hand side value for the constraint.
+
+<P>
+The optional <TT>sense</TT> string defines the sense of the quadratic
+constraint. Allowed values are <TT>&lt;</TT>, <TT>=</TT> or <TT>&gt;</TT>.  If not present, the default sense is <TT>&lt;</TT>. It is stored in <TT>model.quadcon(i).sense</TT>.
+
+<P>
+The optional <TT>name</TT> string defines the name of the quadratic
+constraint. It is stored in <TT>model.quadcon(i).name</TT>.
+
+<P>
+</DD>
+</DL>
+
+<P>
+
+<SPAN  CLASS="textbf">SOS constraint fields</SPAN>
+
+<P>
+<DL>
+<DT><STRONG>sos (optional)</STRONG></DT>
+<DD>The Special Ordered Set (SOS) constraints.
+A struct array. When present, each entry in <TT>sos</TT>
+defines a single SOS constraint. A SOS constraint can be of type 1 or
+2. The type of SOS constraint <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN> is specified via <TT>model.sos(i).type</TT>. A type 1 SOS
+constraint is a set of variables where at most one variable in the
+set may take a value other than zero. A type 2 SOS constraint is an
+ordered set of variables where at most two variables in the set may
+take non-zero values. If two take non-zeros values, they must be
+contiguous in the ordered set. The members of an SOS constraint are
+specified by placing their indices in vector <TT>model.sos(i).index</TT>. Weights
+associated with SOS members are provided in vector <TT>model.sos(i).weight</TT>. Please refer to
+<A ID="tex2html17"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/constraints.html">SOS Constraints</A> 
+section in the reference manual for details on SOS constraints.
+
+<P>
+</DD>
+</DL>
+
+<P>
+
+<SPAN  CLASS="textbf">Multi-objective fields</SPAN>
+
+<P>
+<DL>
+<DT><STRONG>multiobj (optional)</STRONG></DT>
+<DD>Multi-objective specification for the model.
+A struct array. When present, each entry in <TT>multiobj</TT> defines a
+single objective of a multi-objective problem.  Please refer to the
+<A ID="tex2html18"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/multiple_objectives.html">Multiple Objectives</A> 
+section in the reference manual for more details on multi-objective optimization. Each
+objective <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN> may have the following fields:
+<DL>
+<DT><STRONG>objn</STRONG></DT>
+<DD>Specified via <TT>model.multiobj(i).objn</TT>. This is the <EM>i</EM>-th
+objective vector.
+
+<P>
+</DD>
+<DT><STRONG>objcon (optional)</STRONG></DT>
+<DD>Specified via  <TT>model.multiobj(i).objcon</TT>. If provided,
+this is the <EM>i</EM>-th objective constant.
+The default value is 0.
+
+<P>
+</DD>
+<DT><STRONG>priority (optional)</STRONG></DT>
+<DD>Specified via <TT>model.multiobj(i).priority</TT>. If
+provided, this value is the <EM>hierarchical</EM> priority for this objective.
+The default value is 0.
+
+<P>
+</DD>
+<DT><STRONG>weight (optional)</STRONG></DT>
+<DD>Specified via  <TT>model.multiobj(i).weight</TT>. If provided,
+this value is the multiplier used when aggregating objectives.
+The default value is 1.0.
+
+<P>
+</DD>
+<DT><STRONG>reltol (optional)</STRONG></DT>
+<DD>Specified via  <TT>model.multiobj(i).reltol</TT>. If provided,
+this value specifies the relative objective degradation when
+doing hierarchical multi-objective optimization.
+The default value is 0.
+
+<P>
+</DD>
+<DT><STRONG>abstol (optional)</STRONG></DT>
+<DD>Specified via  <TT>model.multiobj(i).abstol</TT>.
+If provided, this value specifies the absolute objective degradation
+when doing hierarchical multi-objective optimization.
+The default value is 0.
+
+<P>
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via  <TT>model.multiobj(i).name</TT>. If provided,
+this string specifies the name of the <EM>i</EM>-th objective function.
+</DD>
+</DL>
+
+<P>
+Note that when multiple objectives are present,
+the <TT>result.objval</TT> field 
+that is returned in the result of an optimization call
+will be a vector of the same length as <TT>model.multiobj</TT>.
+
+<P>
+A multi-objective model can't have other objectives.
+Thus, combining <TT>model.multiobj</TT> with any of
+<TT>model.obj</TT>, <TT>model.objcon</TT>,
+<TT>model.pwlobj</TT>, or <TT>model.Q</TT> is an error.
+
+<P>
+</DD>
+</DL>
+
+<P>
+<SPAN  CLASS="textbf">Computing an IIS</SPAN>
+
+<P>
+When computing an Irreducible Inconsistent Subsystem (IIS) for an infeasible
+model, additional model attributes for variable bounds, linear constraints,
+quadratic constraints and general constraints may be set in order to indicate
+whether a corresponing entity should explicitly included or excluded from the
+IIS:
+
+<P>
+<DL>
+<DT><STRONG>iislbforce (optional)</STRONG></DT>
+<DD>array of length equal to the number of
+variables.  The value of <TT>model.iislbforce(i)</TT>
+specifies the IIS force attribute for the lower bound of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th variable.
+
+<P>
+</DD>
+<DT><STRONG>iisubforce (optional)</STRONG></DT>
+<DD>array of length equal to the number of
+variables.  The value of <TT>model.iisubforce(i)</TT>
+specifies the IIS force attribute for the upper bound of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th variable.
+
+<P>
+</DD>
+<DT><STRONG>iisconstrforce (optional)</STRONG></DT>
+<DD>array of length equal to the number of
+constraints.  The value of <TT>model.iisconstrforce(i)</TT>
+specifies the IIS force attribute for the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th constraint.
+
+<P>
+</DD>
+<DT><STRONG>iisqconstrforce (optional)</STRONG></DT>
+<DD>array of length equal to the number of
+quadratic constraints.  The value of <TT>model.iisqconstrforce(i)</TT>
+specifies the IIS force attribute for the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th quadratic constraint.
+
+<P>
+</DD>
+<DT><STRONG>iisgenconstrforce (optional)</STRONG></DT>
+<DD>array of length equal to the number of
+general constraints.  The value of <TT>model.iisgenconstrforce(i)</TT>
+specifies the IIS force attribute for the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th general constraint.
+
+<P>
+</DD>
+</DL>
+
+<P>
+Possible values for all five attribute arraysfrom above are: <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.15ex; vertical-align: -0.31ex; " SRC="img11.svg"
+ ALT="$-1$"></SPAN> to let the
+algorithm decide, <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.96ex; vertical-align: -0.12ex; " SRC="img12.svg"
+ ALT="$0$"></SPAN> to exclude the corresponding entity from the IIS, and <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.96ex; vertical-align: -0.12ex; " SRC="img13.svg"
+ ALT="$1$"></SPAN>
+to always include the corresponding entity in the IIS.
+
+<P>
+Note that setting this attribute to 0 may make the resulting subsystem
+feasible (or consistent), which would then make it impossible to construct
+an IIS.  Trying anyway will result in a
+<TT>GRB_ERROR_IIS_NOT_INFEASIBLE</TT> error.  Similarly, setting this
+attribute to 1 may result in an IIS that is not irreducible.  More
+precisely, the system would only be irreducible with respect to the model
+elements that have force values of -1 or 0.
+
+<P>
+
+<P>
+<SPAN  CLASS="textbf">General constraint fields</SPAN>
+
+<P>
+The struct arrays described below are used to add <EM>general constraints</EM> to a model.
+
+<P>
+Mathematical programming has traditionally defined a set of
+fundamental constraint types: variable bound constraints, linear
+constraints, quadratic constraints, integrality constraints, and SOS
+constraints.  These are typically treated directly by the underlying
+solver (although not always), and are fundamental to the overall
+algorithm.
+
+<P>
+Gurobi accepts a number of additional constraint types, which we
+collectively refer to as <EM>general (function) constraints</EM>.  These
+are typically <EM>not</EM> treated directly by the solver.  Rather, they
+are transformed by presolve into constraints (and variables) chosen from
+among the fundamental types listed above.  In some cases, the resulting
+constraint or constraints are mathematically equivalent to the original; in
+others, they are approximations.  If such constraints appear in your model,
+but if you prefer to reformulate them yourself using fundamental constraint
+types instead, you can certainly do so.  However, note that Gurobi can
+sometimes exploit information contained in the other constraints in the
+model to build a more efficient formulation than what you might create.
+
+<P>
+The additional constraint types that fall under this <EM>general
+  constraint</EM> umbrella are:
+
+<P>
+
+<UL>
+<LI>MAX (genconmax):
+  set a decision variable equal to the maximum value from
+  among a set of decision variables
+</LI>
+<LI>MIN (genconmin):
+  set a decision variable equal to the minimum value from
+  among a set of decision variables
+</LI>
+<LI>ABS (genconabs):
+  set a decision variable equal to the absolute value
+  of some other decision variable
+</LI>
+<LI>AND (genconand):
+  set a binary variable equal to one if and only if all
+  of a set of binary decision variables are equal to one
+</LI>
+<LI>OR (genconor):
+  set a binary variable equal to one if and only if at least one
+  variable out of a set of binary decision variables is equal to one
+</LI>
+<LI>NORM (genconnorm):
+  set a decision variable equal to the p-norm of a vector of decision
+  variables
+</LI>
+<LI>INDICATOR (genconind):
+  whenever a given binary variable takes a certain value, then the
+  given linear constraint must be satisfied
+</LI>
+<LI>Piecewise-linear constraints (genconpwl):
+  set a variable equal to the piecewise-linear function defined by a set of
+  points using some other variable
+</LI>
+<LI>Polynomial (genconpoly):
+  set a variable equal to the polynomial function defined by some other
+  variable
+</LI>
+<LI>Natural exponential (genconexp):
+  set a variable equal to the natural exponential function by some other
+  variable
+</LI>
+<LI>Exponential (genconexpa):
+  set a variable equal to the exponential function by some other variable
+</LI>
+<LI>Natural logarithm (genconlog):
+  set a variable equal to the natural logarithmic function by some other
+  variable
+</LI>
+<LI>Logarithm (genconloga):
+  set a variable equal to the logarithmic function by some other variable
+</LI>
+<LI>Logistic (genconlogistic)
+  set a variable equal to the logistic function by some other variable
+</LI>
+<LI>Power (genconpow):
+  set a variable equal to the power function by some other variable
+</LI>
+<LI>SIN (genconsin):
+  set a variable equal to the sine function by some other variable
+</LI>
+<LI>COS (genconcos):
+  set a variable equal to the cosine function by some other variable
+</LI>
+<LI>TAN (gencontan):
+  set a variable equal to the tangent function by some other variable
+</LI>
+</UL>
+
+<P>
+Please refer to <A ID="tex2html19"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/constraints.html">General Constraints</A>
+section in the reference manual for additional details on general constraints.
+
+<P>
+<DL>
+<DT><STRONG>genconmax (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconmax</TT> defines a MAX general constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{resvar}] = \max\left\{\mathrm{con},x[j]:j\in\mathrm{vars}\right\}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img14.svg"
+ ALT="$x[\mathrm{resvar}] = \max\left\{\mathrm{con},x[j]:j\in\mathrm{vars}\right\}$"></SPAN>
+</DIV>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>resvar</STRONG></DT>
+<DD>Specified via <TT>model.genconmax(i).resvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>vars</STRONG></DT>
+<DD>Specified via <TT>model.genconmax(i).vars</TT>, it is a vector of
+indices of variables in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>con (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconmax(i).con</TT>. When present,
+specifies the constant on the left-hand side. Default value is
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.01ex; vertical-align: -0.31ex; " SRC="img15.svg"
+ ALT="$-\infty$"></SPAN>.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconmax(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th MAX general constraint.
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconmin (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconmax</TT> defines a MIN general constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{resvar}] = \min\left\{\mathrm{con},x[j]:j\in\mathrm{vars}\right\}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img16.svg"
+ ALT="$x[\mathrm{resvar}] = \min\left\{\mathrm{con},x[j]:j\in\mathrm{vars}\right\}$"></SPAN>
+</DIV>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>resvar</STRONG></DT>
+<DD>Specified via <TT>model.genconmin(i).resvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>vars</STRONG></DT>
+<DD>Specified via <TT>model.genconmin(i).vars</TT>, it is a vector of
+indices of variables in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>con (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconmin(i).con</TT>. When present,
+specifies the constant on the left-hand side. Default value is
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.46ex; vertical-align: -0.12ex; " SRC="img17.svg"
+ ALT="$\infty$"></SPAN>.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconmin(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th MIN general constraint.
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconabs (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconmax</TT> defines an ABS general constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{resvar}] = \vert x[\mathrm{argvar}]\vert$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img18.svg"
+ ALT="$x[\mathrm{resvar}] = \vert x[\mathrm{argvar}]\vert$"></SPAN>
+</DIV>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>resvar</STRONG></DT>
+<DD>Specified via <TT>model.genconabs(i).resvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>argvar</STRONG></DT>
+<DD>Specified via <TT>model.genconabs(i).argvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconabs(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th ABS general constraint.
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconand (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconand</TT> defines an AND general constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{resvar}] = \mathrm{and}\{x[i]:i\in\mathrm{vars}\}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img19.svg"
+ ALT="$x[\mathrm{resvar}] = \mathrm{and}\{x[i]:i\in\mathrm{vars}\}$"></SPAN>
+</DIV>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>resvar</STRONG></DT>
+<DD>Specified via <TT>model.genconand(i).resvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>vars</STRONG></DT>
+<DD>Specified via <TT>model.genconand(i).vars</TT>, it is a vector of
+indices of variables in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconand(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th AND general constraint.
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconor (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconor</TT> defines an OR general constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{resvar}] = \mathrm{or}\{x[i]:i\in\mathrm{vars}\}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img20.svg"
+ ALT="$x[\mathrm{resvar}] = \mathrm{or}\{x[i]:i\in\mathrm{vars}\}$"></SPAN>
+</DIV>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>resvar</STRONG></DT>
+<DD>Specified via <TT>model.genconor(i).resvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>vars</STRONG></DT>
+<DD>Specified via <TT>model.genconor(i).vars</TT>, it is a vector of
+indices of variables in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconor(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th OR general constraint.
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconnorm (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconnorm</TT> defines a NORM general constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{resvar}] = \mathrm{norm}(x[i]:i\in\mathrm{vars}, \mathrm{which})$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img21.svg"
+ ALT="$x[\mathrm{resvar}] = \mathrm{norm}(x[i]:i\in\mathrm{vars}, \mathrm{which})$"></SPAN>
+</DIV>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>resvar</STRONG></DT>
+<DD>Specified via <TT>model.genconnorm(i).resvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>vars</STRONG></DT>
+<DD>Specified via <TT>model.genconnorm(i).vars</TT>, it is a vector of
+indices of variables in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>which</STRONG></DT>
+<DD>Specified via <TT>model.genconnorm(i).which</TT>.
+Specifies which p-norm to use. Possible values are 0, 1, 2 and <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.46ex; vertical-align: -0.12ex; " SRC="img17.svg"
+ ALT="$\infty$"></SPAN>.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconnorm(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th NORM general constraint.
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconind (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconind</TT> defines an INDICATOR general constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{binvar}] = \mathrm{binval}\Rightarrow\sum\left( x[j]\cdot\mathrm{a}[j]\right) \ \mathrm{sense} \ \mathrm{rhs}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img22.svg"
+ ALT="$x[\mathrm{binvar}] = \mathrm{binval}\Rightarrow\sum\left( x[j]\cdot\mathrm{a}[j]\right) \ \mathrm{sense} \ \mathrm{rhs}$"></SPAN>
+</DIV>
+This constraint states that when the binary variable
+<!-- MATH
+ $x[\mathrm{binvar}]$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img23.svg"
+ ALT="$x[\mathrm{binvar}]$"></SPAN>
+takes the value <TT>binval</TT> then the linear constraint
+<!-- MATH
+ $\sum\left(x[\mathrm{vars}[j]]\cdot\mathrm{val}[j]\right) \ \mathrm{sense} \ \mathrm{rhs}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img24.svg"
+ ALT="$\sum\left(x[\mathrm{vars}[j]]\cdot\mathrm{val}[j]\right) \ \mathrm{sense} \ \mathrm{rhs}$"></SPAN>
+must hold.
+Note that <TT>sense</TT> is one of <TT>=</TT>, <TT>&lt;</TT>, or <TT>&gt;</TT> for equality (<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.31ex; vertical-align: -0.12ex; " SRC="img25.svg"
+ ALT="$=$"></SPAN>), less than or equal
+(<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.25ex; vertical-align: -0.43ex; " SRC="img26.svg"
+ ALT="$\leq$"></SPAN>) or greater than or equal (<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.25ex; vertical-align: -0.43ex; " SRC="img27.svg"
+ ALT="$\geq$"></SPAN>) constraints.
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>binvar</STRONG></DT>
+<DD>Specified via <TT>model.genconind(i).binvar</TT>. Index of the implicating binary variable.
+</DD>
+<DT><STRONG>binval</STRONG></DT>
+<DD>Specified via <TT>model.genconind(i).binval</TT>. Value for the binary variable that
+forces the following linear constraint to be satisfied. It can be
+either 0 or 1.
+</DD>
+<DT><STRONG>a</STRONG></DT>
+<DD>Specified via <TT>model.genconind(i).a</TT>.  Vector of coefficients of
+variables participating in the implied linear constraint. You can specify a
+value for <TT>a</TT> for each column of <TT>A</TT> (dense vector) or pass a
+sparse vector (sparse n-by-1 matrix).
+</DD>
+<DT><STRONG>sense</STRONG></DT>
+<DD>Specified via <TT>model.genconind(i).sense</TT>. Sense of the implied linear constraint.
+Must be one of <TT>=</TT>, <TT>&lt;</TT>, or <TT>&gt;</TT>.
+</DD>
+<DT><STRONG>rhs</STRONG></DT>
+<DD>Specified via <TT>model.genconind(i).rhs</TT>. Right-hand side value of the implied linear
+constraint.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconind(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th INDICATOR general constraint.
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconpwl (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconpwl</TT> defines a
+piecewise-linear constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{yvar}] = f(x[\mathrm{xvar}])$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img28.svg"
+ ALT="$x[\mathrm{yvar}] = f(x[\mathrm{xvar}])$"></SPAN>
+</DIV>
+The breakpoints for <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.52ex; vertical-align: -0.57ex; " SRC="img29.svg"
+ ALT="$f$"></SPAN> are provided as arguments. Refer to the description
+of <A ID="tex2html20"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/piecewise-linear_objectives.html">piecewise-linear objectives</A>
+for details of how piecewise-linear functions are defined
+
+<P>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>xvar</STRONG></DT>
+<DD>Specified via <TT>model.genconpwl(i).xvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>yvar</STRONG></DT>
+<DD>Specified via <TT>model.genconpwl(i).yvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>xpts</STRONG></DT>
+<DD>Specified via <TT>model.genconpwl(i).xpts</TT>. Specifies the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.46ex; vertical-align: -0.12ex; " SRC="img30.svg"
+ ALT="$x$"></SPAN> values for the points that
+define the piecewise-linear function. Must be in non-decreasing order.
+</DD>
+<DT><STRONG>ypts</STRONG></DT>
+<DD>Specified via <TT>model.genconpwl(i).ypts</TT>. Specifies the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.91ex; vertical-align: -0.57ex; " SRC="img31.svg"
+ ALT="$y$"></SPAN> values for the points that
+define the piecewise-linear function.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconpwl(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th piecewise-linear general constraint.
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconpoly (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconpoly</TT> defines
+a polynomial function constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{yvar}] = p_0 x[\mathrm{xvar}]^d + p_1 x[\mathrm{xvar}]^{d-1} + ... + p_{d-1} x[\mathrm{xvar}] + p_{d}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.01ex; vertical-align: -0.70ex; " SRC="img32.svg"
+ ALT="$x[\mathrm{yvar}] = p_0 x[\mathrm{xvar}]^d + p_1 x[\mathrm{xvar}]^{d-1} + ... + p_{d-1} x[\mathrm{xvar}] + p_{d}$"></SPAN>
+</DIV>
+A piecewise-linear approximation of the function is
+added to the model.  The details of the approximation are controlled
+using the following four attributes (or using the
+parameters with the same names):
+<A HREF="#attr:FuncPieces">FuncPieces</A>,
+<A HREF="#attr:FuncPieceError">FuncPieceError</A>,
+<A HREF="#attr:FuncPieceLength">FuncPiecesLength</A>, and
+<A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A>.
+For details, consult the
+<A HREF="#subsubsection:GenConstrFunction">General Constraint</A>
+discussion.
+
+<P>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>xvar</STRONG></DT>
+<DD>Specified via <TT>model.genconpoly(i).xvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>yvar</STRONG></DT>
+<DD>Specified via <TT>model.genconpoly(i).yvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>p</STRONG></DT>
+<DD>Specified via <TT>model.genconpoly(i).p</TT>. Specifies the coefficients for the polynomial
+function (starting with the coefficient for the highest power). If <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.43ex; vertical-align: -0.12ex; " SRC="img33.svg"
+ ALT="$x^d$"></SPAN> is
+the highest power term, a dense vector of length <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.26ex; vertical-align: -0.31ex; " SRC="img34.svg"
+ ALT="$d+1$"></SPAN> is returned.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconpoly(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th polynomial function constraint.
+</DD>
+<DT><STRONG>funcpieces (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconpoly(i).funcpieces</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieces">FuncPieces</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  polynomial function constraint.
+  
+</DD>
+<DT><STRONG>funcpiecelength (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconpoly(i).funcpiecelength</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceLength">FuncPieceLength</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  polynomial function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceerror (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconpoly(i).funcpieceerror</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceError">FuncPieceError</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  polynomial function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceratio (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconpoly(i).funcpieceratio</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  polynomial function constraint.
+
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconexp (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconexp</TT> defines
+the natural exponential function constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{yvar}] = \mathrm{exp}(x[\mathrm{xvar}])$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img35.svg"
+ ALT="$x[\mathrm{yvar}] = \mathrm{exp}(x[\mathrm{xvar}])$"></SPAN>
+</DIV>
+A piecewise-linear approximation of the function is
+added to the model.  The details of the approximation are controlled
+using the following four attributes (or using the
+parameters with the same names):
+<A HREF="#attr:FuncPieces">FuncPieces</A>,
+<A HREF="#attr:FuncPieceError">FuncPieceError</A>,
+<A HREF="#attr:FuncPieceLength">FuncPiecesLength</A>, and
+<A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A>.
+For details, consult the
+<A HREF="#subsubsection:GenConstrFunction">General Constraint</A>
+discussion.
+
+<P>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>xvar</STRONG></DT>
+<DD>Specified via <TT>model.genconexp(i).xvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>yvar</STRONG></DT>
+<DD>Specified via <TT>model.genconexp(i).yvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconexp(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th natural exponential function constraint.
+</DD>
+<DT><STRONG>funcpieces (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconexp(i).funcpieces</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieces">FuncPieces</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  natural exponential function constraint.
+  
+</DD>
+<DT><STRONG>funcpiecelength (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconexp(i).funcpiecelength</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceLength">FuncPieceLength</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  natural exponential function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceerror (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconexp(i).funcpieceerror</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceError">FuncPieceError</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  natural exponential function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceratio (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconexp(i).funcpieceratio</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  natural exponential function constraint.
+
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconexpa (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconexpa</TT> defines
+an exponential function constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{yvar}] = \mathrm{a}^{x[\mathrm{xvar}]}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 3.10ex; vertical-align: -0.70ex; " SRC="img36.svg"
+ ALT="$x[\mathrm{yvar}] = \mathrm{a}^{x[\mathrm{xvar}]}$"></SPAN>
+</DIV>
+A piecewise-linear approximation of the function is
+added to the model.  The details of the approximation are controlled
+using the following four attributes (or using the
+parameters with the same names):
+<A HREF="#attr:FuncPieces">FuncPieces</A>,
+<A HREF="#attr:FuncPieceError">FuncPieceError</A>,
+<A HREF="#attr:FuncPieceLength">FuncPiecesLength</A>, and
+<A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A>.
+For details, consult the
+<A HREF="#subsubsection:GenConstrFunction">General Constraint</A>
+discussion.
+
+<P>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>xvar</STRONG></DT>
+<DD>Specified via <TT>model.genconexpa(i).xvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>yvar</STRONG></DT>
+<DD>Specified via <TT>model.genconexpa(i).yvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>a</STRONG></DT>
+<DD>Specified via <TT>model.genconexpa(i).a</TT>. Specifies the base of the exponential function <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.05ex; vertical-align: -0.21ex; " SRC="img37.svg"
+ ALT="$a &gt; 0$"></SPAN>.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconexpa(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th exponential function constraint.
+</DD>
+<DT><STRONG>funcpieces (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconexpa(i).funcpieces</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieces">FuncPieces</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  exponential function constraint.
+  
+</DD>
+<DT><STRONG>funcpiecelength (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconexpa(i).funcpiecelength</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceLength">FuncPieceLength</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  exponential function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceerror (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconexpa(i).funcpieceerror</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceError">FuncPieceError</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  exponential function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceratio (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconexpa(i).funcpieceratio</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  exponential function constraint.
+
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconlog (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconlog</TT> defines
+the natural logarithmic function constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{yvar}] = \mathrm{log}(x[\mathrm{xvar}])$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img38.svg"
+ ALT="$x[\mathrm{yvar}] = \mathrm{log}(x[\mathrm{xvar}])$"></SPAN>
+</DIV>
+A piecewise-linear approximation of the function is
+added to the model.  The details of the approximation are controlled
+using the following four attributes (or using the
+parameters with the same names):
+<A HREF="#attr:FuncPieces">FuncPieces</A>,
+<A HREF="#attr:FuncPieceError">FuncPieceError</A>,
+<A HREF="#attr:FuncPieceLength">FuncPiecesLength</A>, and
+<A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A>.
+For details, consult the
+<A HREF="#subsubsection:GenConstrFunction">General Constraint</A>
+discussion.
+
+<P>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>xvar</STRONG></DT>
+<DD>Specified via <TT>model.genconlog(i).xvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>yvar</STRONG></DT>
+<DD>Specified via <TT>model.genconlog(i).yvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconlog(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th natural logarithmic function constraint.
+</DD>
+<DT><STRONG>funcpieces (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconlog(i).funcpieces</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieces">FuncPieces</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  natural logarithmic function constraint.
+  
+</DD>
+<DT><STRONG>funcpiecelength (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconlog(i).funcpiecelength</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceLength">FuncPieceLength</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  natural logarithmic function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceerror (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconlog(i).funcpieceerror</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceError">FuncPieceError</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  natural logarithmic function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceratio (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconlog(i).funcpieceratio</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  natural logarithmic function constraint.
+
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconloga (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconloga</TT> defines
+a logarithmic function constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{yvar}] = \mathrm{log}(x[\mathrm{xvar}])\setminus\mathrm{log}(a)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img39.svg"
+ ALT="$x[\mathrm{yvar}] = \mathrm{log}(x[\mathrm{xvar}])\setminus\mathrm{log}(a)$"></SPAN>
+</DIV>
+A piecewise-linear approximation of the function is
+added to the model.  The details of the approximation are controlled
+using the following four attributes (or using the
+parameters with the same names):
+<A HREF="#attr:FuncPieces">FuncPieces</A>,
+<A HREF="#attr:FuncPieceError">FuncPieceError</A>,
+<A HREF="#attr:FuncPieceLength">FuncPiecesLength</A>, and
+<A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A>.
+For details, consult the
+<A HREF="#subsubsection:GenConstrFunction">General Constraint</A>
+discussion.
+
+<P>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>xvar</STRONG></DT>
+<DD>Specified via <TT>model.genconloga(i).xvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>yvar</STRONG></DT>
+<DD>Specified via <TT>model.genconloga(i).yvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>a</STRONG></DT>
+<DD>Specified via <TT>model.genconloga(i).a</TT>. Specifies the base of the logarithmic function <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.05ex; vertical-align: -0.21ex; " SRC="img37.svg"
+ ALT="$a &gt; 0$"></SPAN>.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconloga(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th logarithmic function constraint.
+</DD>
+<DT><STRONG>funcpieces (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconloga(i).funcpieces</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieces">FuncPieces</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  logarithmic function constraint.
+  
+</DD>
+<DT><STRONG>funcpiecelength (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconloga(i).funcpiecelength</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceLength">FuncPieceLength</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  logarithmic function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceerror (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconloga(i).funcpieceerror</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceError">FuncPieceError</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  logarithmic function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceratio (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconloga(i).funcpieceratio</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  logarithmic function constraint.
+
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconlogistic (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconlog</TT> defines
+the logistic function constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{yvar}] = 1 / (1 - \mathrm{exp}(-x[\mathrm{xvar}]))$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img40.svg"
+ ALT="$x[\mathrm{yvar}] = 1 / (1 - \mathrm{exp}(-x[\mathrm{xvar}]))$"></SPAN>
+</DIV>
+A piecewise-linear approximation of the function is
+added to the model.  The details of the approximation are controlled
+using the following four attributes (or using the
+parameters with the same names):
+<A HREF="#attr:FuncPieces">FuncPieces</A>,
+<A HREF="#attr:FuncPieceError">FuncPieceError</A>,
+<A HREF="#attr:FuncPieceLength">FuncPiecesLength</A>, and
+<A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A>.
+For details, consult the
+<A HREF="#subsubsection:GenConstrFunction">General Constraint</A>
+discussion.
+
+<P>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>xvar</STRONG></DT>
+<DD>Specified via <TT>model.genconlogistic(i).xvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>yvar</STRONG></DT>
+<DD>Specified via <TT>model.genconlogistic(i).yvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconlogistic(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th logistic function constraint.
+</DD>
+<DT><STRONG>funcpieces (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconlogistic(i).funcpieces</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieces">FuncPieces</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  logistic function constraint.
+  
+</DD>
+<DT><STRONG>funcpiecelength (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconlogistic(i).funcpiecelength</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceLength">FuncPieceLength</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  logistic function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceerror (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconlogistic(i).funcpieceerror</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceError">FuncPieceError</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  logistic function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceratio (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconlogistic(i).funcpieceratio</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  logistic function constraint.
+
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconpow (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconpow</TT> defines
+a power function constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{yvar}] = x[\mathrm{xvar}]^\mathrm{a}$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img41.svg"
+ ALT="$x[\mathrm{yvar}] = x[\mathrm{xvar}]^\mathrm{a}$"></SPAN>
+</DIV>
+A piecewise-linear approximation of the function is
+added to the model.  The details of the approximation are controlled
+using the following four attributes (or using the
+parameters with the same names):
+<A HREF="#attr:FuncPieces">FuncPieces</A>,
+<A HREF="#attr:FuncPieceError">FuncPieceError</A>,
+<A HREF="#attr:FuncPieceLength">FuncPiecesLength</A>, and
+<A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A>.
+For details, consult the
+<A HREF="#subsubsection:GenConstrFunction">General Constraint</A>
+discussion.
+
+<P>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>xvar</STRONG></DT>
+<DD>Specified via <TT>model.genconpow(i).xvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>yvar</STRONG></DT>
+<DD>Specified via <TT>model.genconpow(i).yvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>a</STRONG></DT>
+<DD>Specified via <TT>model.genconpow(i).a</TT>. Specifies the exponent of the power function.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconpow(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th power function constraint.
+</DD>
+<DT><STRONG>funcpieces (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconpow(i).funcpieces</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieces">FuncPieces</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  power function constraint.
+  
+</DD>
+<DT><STRONG>funcpiecelength (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconpow(i).funcpiecelength</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceLength">FuncPieceLength</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  power function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceerror (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconpow(i).funcpieceerror</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceError">FuncPieceError</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  power function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceratio (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconpow(i).funcpieceratio</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  power function constraint.
+
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconsin (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconsin</TT> defines
+the sine function constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{yvar}] = \mathrm{sin}(x[\mathrm{xvar}])$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img42.svg"
+ ALT="$x[\mathrm{yvar}] = \mathrm{sin}(x[\mathrm{xvar}])$"></SPAN>
+</DIV>
+A piecewise-linear approximation of the function is
+added to the model.  The details of the approximation are controlled
+using the following four attributes (or using the
+parameters with the same names):
+<A HREF="#attr:FuncPieces">FuncPieces</A>,
+<A HREF="#attr:FuncPieceError">FuncPieceError</A>,
+<A HREF="#attr:FuncPieceLength">FuncPiecesLength</A>, and
+<A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A>.
+For details, consult the
+<A HREF="#subsubsection:GenConstrFunction">General Constraint</A>
+discussion.
+
+<P>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>xvar</STRONG></DT>
+<DD>Specified via <TT>model.genconsin(i).xvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>yvar</STRONG></DT>
+<DD>Specified via <TT>model.genconsin(i).yvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconsin(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th sine function constraint.
+</DD>
+<DT><STRONG>funcpieces (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconsin(i).funcpieces</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieces">FuncPieces</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  sine function constraint.
+  
+</DD>
+<DT><STRONG>funcpiecelength (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconsin(i).funcpiecelength</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceLength">FuncPieceLength</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  sine function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceerror (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconsin(i).funcpieceerror</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceError">FuncPieceError</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  sine function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceratio (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconsin(i).funcpieceratio</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  sine function constraint.
+
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>genconcos (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>genconcos</TT> defines
+the cosine function constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{yvar}] = \mathrm{cos}(x[\mathrm{xvar}])$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img43.svg"
+ ALT="$x[\mathrm{yvar}] = \mathrm{cos}(x[\mathrm{xvar}])$"></SPAN>
+</DIV>
+A piecewise-linear approximation of the function is
+added to the model.  The details of the approximation are controlled
+using the following four attributes (or using the
+parameters with the same names):
+<A HREF="#attr:FuncPieces">FuncPieces</A>,
+<A HREF="#attr:FuncPieceError">FuncPieceError</A>,
+<A HREF="#attr:FuncPieceLength">FuncPiecesLength</A>, and
+<A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A>.
+For details, consult the
+<A HREF="#subsubsection:GenConstrFunction">General Constraint</A>
+discussion.
+
+<P>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>xvar</STRONG></DT>
+<DD>Specified via <TT>model.genconcos(i).xvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>yvar</STRONG></DT>
+<DD>Specified via <TT>model.genconcos(i).yvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconcos(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th cosine function constraint.
+</DD>
+<DT><STRONG>funcpieces (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconcos(i).funcpieces</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieces">FuncPieces</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  cosine function constraint.
+  
+</DD>
+<DT><STRONG>funcpiecelength (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconcos(i).funcpiecelength</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceLength">FuncPieceLength</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  cosine function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceerror (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconcos(i).funcpieceerror</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceError">FuncPieceError</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  cosine function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceratio (optional)</STRONG></DT>
+<DD>Specified via <TT>model.genconcos(i).funcpieceratio</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  cosine function constraint.
+
+</DD>
+</DL>
+
+<P>
+</DD>
+<DT><STRONG>gencontan (optional)</STRONG></DT>
+<DD>A struct array. When present, each entry in <TT>gencontan</TT> defines
+the tangent function constraint of the form
+<DIV class="CENTER">
+<!-- MATH
+ $x[\mathrm{yvar}] = \mathrm{tan}(x[\mathrm{xvar}])$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.78ex; vertical-align: -0.70ex; " SRC="img44.svg"
+ ALT="$x[\mathrm{yvar}] = \mathrm{tan}(x[\mathrm{xvar}])$"></SPAN>
+</DIV>
+A piecewise-linear approximation of the function is
+added to the model.  The details of the approximation are controlled
+using the following four attributes (or using the
+parameters with the same names):
+<A HREF="#attr:FuncPieces">FuncPieces</A>,
+<A HREF="#attr:FuncPieceError">FuncPieceError</A>,
+<A HREF="#attr:FuncPieceLength">FuncPiecesLength</A>, and
+<A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A>.
+For details, consult the
+<A HREF="#subsubsection:GenConstrFunction">General Constraint</A>
+discussion.
+
+<P>
+Each entry may have the following fields:
+<DL>
+<DT><STRONG>xvar</STRONG></DT>
+<DD>Specified via <TT>model.gencontan(i).xvar</TT>. Index of the
+variable in the right-hand side of the constraint.
+</DD>
+<DT><STRONG>yvar</STRONG></DT>
+<DD>Specified via <TT>model.gencontan(i).yvar</TT>. Index of the
+variable in the left-hand side of the constraint.
+</DD>
+<DT><STRONG>name (optional)</STRONG></DT>
+<DD>Specified via <TT>model.gencontan(i).name</TT>. When present,
+specifies the name of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th tangent function constraint.
+</DD>
+<DT><STRONG>funcpieces (optional)</STRONG></DT>
+<DD>Specified via <TT>model.gencontan(i).funcpieces</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieces">FuncPieces</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  tangent function constraint.
+  
+</DD>
+<DT><STRONG>funcpiecelength (optional)</STRONG></DT>
+<DD>Specified via <TT>model.gencontan(i).funcpiecelength</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceLength">FuncPieceLength</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  tangent function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceerror (optional)</STRONG></DT>
+<DD>Specified via <TT>model.gencontan(i).funcpieceerror</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceError">FuncPieceError</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  tangent function constraint.
+  
+</DD>
+<DT><STRONG>funcpieceratio (optional)</STRONG></DT>
+<DD>Specified via <TT>model.gencontan(i).funcpieceratio</TT>. When present, specifies the
+  <A HREF="#attr:FuncPieceRatio">FuncPieceRatio</A> attribute of the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.99ex; vertical-align: -0.12ex; " SRC="img10.svg"
+ ALT="$i$"></SPAN>-th
+  tangent function constraint.
+
+</DD>
+</DL>
+
+<P>
+</DD>
+</DL>
+
+<P>
+
+<P>
+<SPAN  CLASS="textbf">Advanced fields</SPAN>
+
+<P>
+<DL>
+<DT><STRONG>pwlobj (optional)</STRONG></DT>
+<DD>The piecewise-linear objective functions.
+A struct array. When present, each entry in <TT>pwlobj</TT>
+defines a piecewise-linear objective function for a single variable.
+The index of the variable whose objective function is being defined is
+stored in <TT>model.pwlobj(i).var</TT>. The <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.46ex; vertical-align: -0.12ex; " SRC="img30.svg"
+ ALT="$x$"></SPAN> values for
+the points that define the piecewise-linear function are stored in
+<BR><TT>model.pwlobj(i).x</TT>. The
+values in the <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.46ex; vertical-align: -0.12ex; " SRC="img30.svg"
+ ALT="$x$"></SPAN> vector must be in non-decreasing order. The <SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.91ex; vertical-align: -0.57ex; " SRC="img31.svg"
+ ALT="$y$"></SPAN>
+values for the points that define the piecewise-linear function are
+stored in <TT>model.pwlobj(i).y</TT>.
+
+<P>
+</DD>
+<DT><STRONG>vbasis (optional)</STRONG></DT>
+<DD>The variable basis status vector. Used to
+provide an advanced starting point for the simplex algorithm. You
+would generally never concern yourself with the contents of this
+vector, but would instead simply pass it from the result of a previous
+optimization run to the input of a subsequent run. When present, you
+must specify one value for each column of <TT>A</TT>.
+
+<P>
+</DD>
+<DT><STRONG>cbasis (optional)</STRONG></DT>
+<DD>The constraint basis status vector. Used to
+provide an advanced starting point for the simplex algorithm. Consult
+the <TT>vbasis</TT> description for details. When present, you
+must specify one value for each row of <TT>A</TT>.
+
+<P>
+</DD>
+<DT><STRONG>varhintval (optional)</STRONG></DT>
+<DD>A set of user hints.  If you know that a
+variable is likely to take a particular value in high quality
+solutions of a MIP model, you can provide that value as a hint.  You
+can also (optionally) provide information about your level of
+confidence in a hint with the
+<TT>varhintpri</TT> field.
+If present, you must specify one value
+for each column of <TT>A</TT>.
+Use a value of <TT>nan</TT> for variables where no such hint is known.
+For more details, please refer to the
+<A ID="tex2html21"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/varhintval.html">Attribute</A> section in the reference manual.
+
+<P>
+</DD>
+<DT><STRONG>varhintpri (optional)</STRONG></DT>
+<DD>Priorities on user hints.  After
+providing variable hints through the <TT>varhintval</TT> struct,
+you can optionally also provide hint priorities to give an indication
+of your level of confidence in your hints.
+If present, you must specify a value
+for each column of <TT>A</TT>.
+For more details, please refer to the
+<A ID="tex2html22"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/varhintval.html">Attribute</A> section in the reference manual.
+
+<P>
+</DD>
+<DT><STRONG>branchpriority (optional)</STRONG></DT>
+<DD>Variable branching priority. If
+present, the value of this attribute is used as the primary criteria
+for selecting a fractional variable for branching during the MIP
+search.  Variables with larger values always take priority over those
+with smaller values.  Ties are broken using the standard branch
+variable selection criteria.
+If present, you must specify one value
+for each column of <TT>A</TT>.
+
+<P>
+</DD>
+<DT><STRONG>pstart (optional)</STRONG></DT>
+<DD>The current simplex start vector.  If you set
+<TT>pstart</TT> values for every variable in the model and
+<TT>dstart</TT> values for every constraint, then simplex will use
+those values to compute a warm start basis.  For more details, please
+refer to the <A ID="tex2html23"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/pstart.html">Attribute</A> section in the reference manual.
+
+<P>
+</DD>
+<DT><STRONG>dstart (optional)</STRONG></DT>
+<DD>The current simplex start vector.  If you set
+<TT>dstart</TT> values for every linear constraint in the model and
+<TT>pstart</TT> values for every variable, then
+simplex will use those values to compute a warm start basis.  For more
+details, please refer to the <A ID="tex2html24"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/dstart.html">Attribute</A> 
+section in the reference manual.
+
+<P>
+</DD>
+<DT><STRONG>lazy (optional)</STRONG></DT>
+<DD>Determines whether a linear constraint is
+treated as a <EM>lazy constraint</EM>.
+If present, you must specify one value for each row of <TT>A</TT>.
+For more details, please refer
+to the <A ID="tex2html25"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/lazy.html">Attribute</A> section in the reference manual.
+
+<P>
+</DD>
+<DT><STRONG>start (optional)</STRONG></DT>
+<DD>The MIP start vector. The MIP solver will
+attempt to build an initial solution from this vector. When present,
+you must specify a start value for each variable. Note that you can
+set the start value for a variable to <TT>nan</TT>, which
+instructs the MIP solver to try to fill in a value for that variable.
+
+<P>
+</DD>
+<DT><STRONG>partition (optional)</STRONG></DT>
+<DD>The MIP variable partition number, which
+is used by the MIP solution improvement heuristic.  If present,
+you must specify one value for each variable of <TT>A</TT>.
+For more details, please refer
+to the <A ID="tex2html26"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/partition.html">Attribute</A>
+section in the reference manual.
+
+<P>
+</DD>
+</DL>
+
+<P>
+If any of the mandatory components listed above are missing, the
+<TT>gurobi()</TT> function will return an error.
+
+<P>
+Below is an example that demonstrates the construction of a simple
+optimization model:
+<BR>
+<BR>
+<BR>
+<P>
+<TT>model.A          = sparse([1 2 3; 1 1 0]);
+<BR>
+model.obj        = [1 1 1];
+<BR>
+model.modelsense = 'max';
+<BR>
+model.rhs        = [4; 1];
+<BR>
+model.sense      = '&lt;&gt;'
+<BR></TT>
+
+<P>
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="matlab_the_params_argument.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_common_arguments.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_common_arguments.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_the_params_argument.html">The params argument</A>
+<B> Up:</B> <A
+ HREF="matlab_common_arguments.html">Common Arguments</A>
+<B> Previous:</B> <A
+ HREF="matlab_common_arguments.html">Common Arguments</A></DIV>
+<!--End of Navigation Panel-->
+
+</BODY>
+</HTML>

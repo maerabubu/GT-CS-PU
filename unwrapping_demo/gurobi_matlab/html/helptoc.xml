@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding="utf-8"?>
+<toc version="2.0">
+<tocitem target="matlab_api_overview.html">MATLAB API Overview</tocitem>
+<tocitem target="matlab_api_details.html">MATLAB API Details
+	<tocitem target="matlab_common_arguments.html">Common Arguments
+		<tocitem target="matlab_the_model_argument.html">The model argument</tocitem>
+		<tocitem target="matlab_the_params_argument.html">The params argument</tocitem>
+	</tocitem>
+	<tocitem target="matlab_solving_a_model.html">Solving a Model
+		<tocitem target="matlab_grb.html">gurobi()</tocitem>
+		<tocitem target="matlab_grb_iis.html">gurobi_iis()</tocitem>
+		<tocitem target="matlab_grb_feasrelax.html">gurobi_feasrelax()</tocitem>
+		<tocitem target="matlab_grb_relax.html">gurobi_relax()</tocitem>
+	</tocitem>
+	<tocitem target="matlab_input_output.html">Input/Output
+		<tocitem target="matlab_grb_read.html">gurobi_read()</tocitem>
+		<tocitem target="matlab_grb_write.html">gurobi_write()</tocitem>
+	</tocitem>
+	<tocitem target="matlab_using_grb_within_ma.html">Using Gurobi within MATLAB's Problem-Based Optimization</tocitem>
+	<tocitem target="matlab_setting_up_the_grb_.html">Setting up the Gurobi MATLAB interface</tocitem>
+</tocitem>
+
+</toc>

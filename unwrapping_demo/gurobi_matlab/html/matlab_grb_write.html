@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021.2 (Released July 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>gurobi_write()</TITLE>
+<META NAME="description" CONTENT="gurobi_write()">
+<META NAME="keywords" CONTENT="matlab_html">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021.2">
+
+<LINK REL="STYLESHEET" HREF="matlab_html.css">
+
+<LINK REL="previous" HREF="matlab_grb_read.html">
+<LINK REL="next" HREF="matlab_using_grb_within_ma.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A
+ HREF="matlab_using_grb_within_ma.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_input_output.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_grb_read.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_using_grb_within_ma.html">Using Gurobi within MATLAB's</A>
+<B> Up:</B> <A
+ HREF="matlab_input_output.html">Input/Output</A>
+<B> Previous:</B> <A
+ HREF="matlab_grb_read.html">gurobi_read()</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H3><A ID="SECTION00023200000000000000">
+gurobi_write()</A>
+</H3>
+<A ID="matlab:gurobi_write"></A>
+
+<TABLE class="PAD " style="">
+<TR><TD CLASS="LEFT"><FONT COLOR="#801a1a"> <SPAN CLASS="LARGE"><SPAN  CLASS="textbf">gurobi_write</SPAN></SPAN> </FONT></TD>
+<TD CLASS="LEFT">( model, filename )</TD>
+</TR>
+<TR><TD CLASS="LEFT"><FONT COLOR="#801a1a"> <SPAN CLASS="LARGE"><SPAN  CLASS="textbf">gurobi_write</SPAN></SPAN> </FONT></TD>
+<TD CLASS="LEFT">( model, filename, params )</TD>
+</TR>
+</TABLE>
+
+
+<P>
+Writes a model to a file.
+
+<P>
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Arguments:</SPAN></SPAN>
+
+<P>
+ <SPAN  CLASS="textbf">model</SPAN>: The model <TT>struct</TT> must contain a valid Gurobi model.
+See the 
+<A HREF="matlab_the_model_argument.html#matlab:model"><TT>model</TT></A> argument section
+for more information.
+
+<P>
+ <SPAN  CLASS="textbf">filename</SPAN>: Name of the file to write. Note that the type of
+the file is encoded in the file name suffix. The filename suffix
+should be one of .mps, .rew, .lp, .rlp, .dua, .dlp, or .ilp, to indicate the
+desired file format (see the
+<A ID="tex2html41"
+  HREF="https://www.gurobi.com/documentation/10.0/refman/model_file_formats.html">file formats</A> 
+section for details on
+Gurobi file formats). The files can be compressed, so additional
+suffixes of .gz, .bz2, .zip, or .7z are accepted.
+
+<P>
+ <SPAN  CLASS="textbf">params</SPAN>: The params <TT>struct</TT>, when provided, contains a list of modified Gurobi parameters. See the
+
+<A HREF="matlab_the_params_argument.html#matlab:params"><TT>params</TT></A> argument section
+for more information.
+
+<P>
+
+<P>
+
+<SPAN CLASS="LARGE"><SPAN  CLASS="textbf">Example usage:</SPAN></SPAN>
+<BR><TT>
+<SCRIPT SRC="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></SCRIPT></TT>
+<BR>
+<PRE CLASS="prettyprint">    model.A          = sparse([1 2 3; 1 1 0]);
+    model.obj        = [1 1 2];
+    model.modelsense = 'max';
+    model.rhs        = [4; 1];
+    model.sense      = '&lt;&gt;';
+    gurobi_write(model, 'mymodel.mps');
+    gurobi_write(model, 'mymodel.lp');
+    gurobi_write(model, 'mymodel.mps.bz2');
+</PRE>
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A
+ HREF="matlab_using_grb_within_ma.html">
+<IMG WIDTH="37" HEIGHT="24" ALT="next" SRC="next.png"></A> 
+<A
+ HREF="matlab_input_output.html">
+<IMG WIDTH="26" HEIGHT="24" ALT="up" SRC="up.png"></A> 
+<A
+ HREF="matlab_grb_read.html">
+<IMG WIDTH="63" HEIGHT="24" ALT="previous" SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A
+ HREF="matlab_using_grb_within_ma.html">Using Gurobi within MATLAB's</A>
+<B> Up:</B> <A
+ HREF="matlab_input_output.html">Input/Output</A>
+<B> Previous:</B> <A
+ HREF="matlab_grb_read.html">gurobi_read()</A></DIV>
+<!--End of Navigation Panel-->
+
+</BODY>
+</HTML>

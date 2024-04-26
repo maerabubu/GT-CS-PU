@@ -1,0 +1,16 @@
+<productinfo>
+    <?xml-stylesheet type="text/xsl"href="optional"?>
+    <!-- info.xml file for the Gurobi toolbox -->
+    <!-- Author: Gurobi Optimization LLC. -->
+    <!-- Copyright 2018 Gurobi Optimization LLC. -->
+
+    <matlabrelease>2018a</matlabrelease>
+    <!-- (Required) The name element appears in the Contents pane -->
+    <name>Gurobi Optimizer</name>
+    <!-- (Required) The type elementidentifies your package; pick one: -->
+    <!-- matlab, toolbox, simulink, blockset, links_targets  -->
+    <type>toolbox</type>
+    <icon></icon>
+    <!-- (Required) The help_location is relative path to help (HTML) file folder -->
+    <help_location>html</help_location>
+</productinfo>
