@@ -20,3 +20,5 @@ References:
 
 
 [2] Ma, Z.F. et.al (2021), Go Extra Miles: An Additional Error Correction Procedure Aimed to Further Improve Phase Unwrapping Accuracy and Reduce Creep Model Uncertainty. Journal of Geophysical Research-Solid Earth
+
+[3] Ma, Z.F. et.al (2025), Unwrapping error and fading signal correction on multi-looked InSAR data. ISPRS Journal of Photogrammetry and Remote Sensing
